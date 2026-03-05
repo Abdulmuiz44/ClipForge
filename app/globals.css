@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f4ecdf;
+  --panel: rgba(255, 248, 239, 0.85);
+  --card: rgba(255, 255, 255, 0.72);
+  --text: #111111;
+  --muted: #5d5349;
+  --line: rgba(17, 17, 17, 0.08);
+  --coral: #ef8354;
+  --teal: #1f7a8c;
+  --moss: #2d6a4f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(239, 131, 84, 0.25), transparent 28%),
+    radial-gradient(circle at top right, rgba(31, 122, 140, 0.18), transparent 30%),
+    linear-gradient(180deg, #fbf6ee 0%, var(--bg) 48%, #efe3d1 100%);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-6xl px-4 md:px-6;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 60px rgba(17, 17, 17, 0.07);
+    @apply rounded-[28px] backdrop-blur;
+  }
+
+  .glass-card {
+    background: var(--card);
+    border: 1px solid rgba(17, 17, 17, 0.08);
+    @apply rounded-[24px] backdrop-blur;
+  }
+}
