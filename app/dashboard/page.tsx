@@ -18,7 +18,7 @@ export default async function DashboardPage() {
       <PageIntro
         eyebrow="Dashboard"
         title="Control credits, queue clips, and monitor job output."
-        body="PromptClips keeps the rendering path narrow: write the prompt, choose the clip shape, and let the worker finish the lifecycle."
+        body="ClipForge keeps the rendering path narrow: write the prompt, choose the clip shape, and let the worker finish the lifecycle."
         actions={<BuyButtons />}
       />
       <section className="grid gap-4 md:grid-cols-3">

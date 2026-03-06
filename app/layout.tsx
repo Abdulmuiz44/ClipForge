@@ -15,9 +15,11 @@ const sans = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "PromptClips",
+  title: "ClipForge",
   description: "Turn a short prompt into a paid, credit-based AI video clip.",
 };
+
+export const dynamic = "force-dynamic";
 
 export default function RootLayout({
   children,

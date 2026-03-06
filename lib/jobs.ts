@@ -11,7 +11,7 @@ export function buildProviderPrompt(prompt: string, isDemo: boolean) {
     return prompt;
   }
 
-  return `${prompt}. Add a subtle but visible PromptClips watermark overlay in a corner.`;
+  return `${prompt}. Add a subtle but visible ClipForge watermark overlay in a corner.`;
 }
 
 export function buildJobInsert(profile: ProfileRow, params: {

@@ -1,8 +1,8 @@
 export const logger = {
   info(message: string, meta?: unknown) {
-    console.info(`[PromptClips] ${message}`, meta ?? "");
+    console.info(`[ClipForge] ${message}`, meta ?? "");
   },
   error(message: string, meta?: unknown) {
-    console.error(`[PromptClips] ${message}`, meta ?? "");
+    console.error(`[ClipForge] ${message}`, meta ?? "");
   },
 };

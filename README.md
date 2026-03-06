@@ -1,12 +1,13 @@
-# PromptClips
+# ClipForge
 
-PromptClips is a lean AIVideo-style MVP built with Next.js 14, Supabase, Replicate, and Lemon Squeezy. It turns a short text prompt into a 10-30 second AI video job with credit accounting, paid access control, and a simple dashboard.
+ClipForge is a lean AI video MVP built with Next.js 14, NextAuth Google OAuth, Supabase, Replicate, and Lemon Squeezy. It turns a short text prompt into a 10-30 second AI video job with credit accounting, paid access control, and a simple dashboard.
 
 ## Stack
 
 - Next.js 14 App Router + TypeScript
 - Tailwind CSS
-- Supabase Auth + Postgres
+- NextAuth Google OAuth
+- Supabase Postgres + storage
 - Replicate text-to-video adapter in `lib/videoProvider.ts`
 - Lemon Squeezy checkout links + webhook handling
 - Vercel Cron compatible worker endpoint at `/api/jobs/process`
@@ -22,17 +23,26 @@ pnpm install
 2. Copy `.env.example` to `.env.local` and fill in:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `AUTH_GOOGLE_ID`
+- `AUTH_GOOGLE_SECRET`
 - `REPLICATE_API_TOKEN`
 - `REPLICATE_MODEL_VERSION`
 - `LEMON_SQUEEZY_WEBHOOK_SECRET`
 - Lemon checkout URLs and variant IDs
 - `CRON_SECRET`
 
-3. Apply the SQL schema in `supabase/migrations/0001_promptclips.sql` to your Supabase project.
+3. Apply the SQL schema in `supabase/migrations/0001_clipforge.sql` to your Supabase project.
 
-4. Run the dev server:
+4. In Google Cloud Console, add an OAuth client with callback URL:
+
+```text
+http://localhost:3000/api/auth/callback/google
+```
+
+5. Run the dev server:
 
 ```bash
 pnpm dev
@@ -40,7 +50,8 @@ pnpm dev
 
 ## Product behavior
 
-- Users can sign up and sign in with Supabase email/password auth.
+- Users sign in with Google OAuth via NextAuth.
+- Supabase is used only for database and storage concerns.
 - Unpaid users get `2` watermarked demo generations.
 - Paid users can render non-demo clips if they have enough credits.
 - Credit cost is configurable in `lib/credits.ts`.
@@ -53,6 +64,7 @@ pnpm dev
 - Webhook endpoint: `/api/webhooks/lemonsqueezy`
 - Variant-to-credit/plan mapping lives in `lib/payments/catalog.ts`
 - Webhook verification and parsing live in `lib/payments/lemonsqueezy.ts`
+- Users are resolved by Google email and stored in Supabase `profiles`
 
 Recommended webhook custom data:
 

@@ -36,15 +36,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, duplicate: true });
     }
 
-    const userLookup = await admin.auth.admin.listUsers();
-    const matched = userLookup.data.users.find((user) => user.email === event.email);
+    const { data: profile, error: profileError } = await admin
+      .from("profiles")
+      .select("id")
+      .eq("email", event.email)
+      .maybeSingle<{ id: string }>();
 
-    if (!matched) {
-      throw new Error(`No user found for ${event.email}`);
+    if (profileError) {
+      throw new Error(profileError.message);
+    }
+
+    const userId = event.email;
+
+    if (!profile) {
+      const { error: insertError } = await admin.from("profiles").insert({
+        id: userId,
+        email: event.email,
+      });
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
     }
 
     const { error } = await admin.rpc("apply_payment_event", {
-      p_user_id: matched.id,
+      p_user_id: userId,
       p_lemonsqueezy_event_id: event.eventId,
       p_payment_type: effect.type,
       p_amount: event.amount,

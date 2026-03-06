@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AuthForm } from "@/components/auth-form";
+import { GoogleAuthButton } from "@/components/google-auth-button";
 import { PageIntro } from "@/components/ui";
 
 export default function SignUpPage() {
@@ -8,11 +8,11 @@ export default function SignUpPage() {
       <div className="panel mx-auto max-w-2xl p-8 md:p-10">
         <PageIntro
           eyebrow="Authentication"
-          title="Create your PromptClips account"
-          body="Start with two watermarked demos, then unlock full renders with a paid plan or credit pack."
+          title="Create your ClipForge account"
+          body="Start with Google OAuth, then use two watermarked demos or unlock full renders with a paid plan or credit pack."
         />
         <div className="mt-8">
-          <AuthForm mode="signup" />
+          <GoogleAuthButton mode="signup" />
           <p className="mt-6 text-sm text-black/60">
             Already have an account?{" "}
             <Link href="/auth/signin" className="underline underline-offset-4">

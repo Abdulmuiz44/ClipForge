@@ -15,7 +15,7 @@ create table if not exists public.plans (
 );
 
 create table if not exists public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
+  id text primary key,
   email text not null unique,
   credits_balance integer not null default 0,
   reserved_credits integer not null default 0,
@@ -28,7 +28,7 @@ create table if not exists public.profiles (
 
 create table if not exists public.video_jobs (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   prompt text not null,
   duration_seconds integer not null check (duration_seconds between 10 and 30),
   aspect_ratio text not null,
@@ -51,7 +51,7 @@ create table if not exists public.video_jobs (
 
 create table if not exists public.payments (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public.profiles(id) on delete cascade,
+  user_id text not null references public.profiles(id) on delete cascade,
   lemonsqueezy_event_id text not null unique,
   type public.payment_type not null,
   amount integer not null default 0,
@@ -68,23 +68,6 @@ values
   ('Pro', 'PRO', 49, 400, 'For creators running a steady clip pipeline.'),
   ('Enterprise', 'ENTERPRISE', 199, 2000, 'High-volume teams with room for experimentation.')
 on conflict (tier) do nothing;
-
-create or replace function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer
-as $$
-begin
-  insert into public.profiles (id, email)
-  values (new.id, coalesce(new.email, new.raw_user_meta_data ->> 'email', ''));
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-after insert on auth.users
-for each row execute procedure public.handle_new_user();
 
 create or replace function public.touch_updated_at()
 returns trigger
@@ -106,7 +89,7 @@ create trigger video_jobs_touch_updated_at
 before update on public.video_jobs
 for each row execute procedure public.touch_updated_at();
 
-create or replace function public.reserve_credits_for_profile(p_profile_id uuid, p_credits integer)
+create or replace function public.reserve_credits_for_profile(p_profile_id text, p_credits integer)
 returns void
 language plpgsql
 security definer
@@ -123,7 +106,7 @@ begin
 end;
 $$;
 
-create or replace function public.increment_demo_usage(p_profile_id uuid)
+create or replace function public.increment_demo_usage(p_profile_id text)
 returns void
 language plpgsql
 security definer
@@ -202,7 +185,7 @@ end;
 $$;
 
 create or replace function public.apply_payment_event(
-  p_user_id uuid,
+  p_user_id text,
   p_lemonsqueezy_event_id text,
   p_payment_type public.payment_type,
   p_amount integer,
@@ -252,18 +235,6 @@ alter table public.profiles enable row level security;
 alter table public.video_jobs enable row level security;
 alter table public.payments enable row level security;
 alter table public.plans enable row level security;
-
-create policy "profiles select own" on public.profiles
-for select using (auth.uid() = id);
-
-create policy "profiles update own" on public.profiles
-for update using (auth.uid() = id);
-
-create policy "video jobs own access" on public.video_jobs
-for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
-create policy "payments own access" on public.payments
-for select using (auth.uid() = user_id);
 
 create policy "plans public read" on public.plans
 for select using (true);

@@ -1,8 +1,8 @@
 import { env } from "@/lib/config";
 
 export function requireSupabaseClientEnv() {
-  if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    throw new Error("Supabase public env vars are not configured.");
+  if (!env.NEXT_PUBLIC_SUPABASE_URL) {
+    throw new Error("Supabase URL is not configured.");
   }
 }
 

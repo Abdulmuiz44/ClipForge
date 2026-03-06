@@ -3,9 +3,11 @@ import { type PlanTier } from "@/lib/types";
 
 const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
-  APP_URL: z.string().url().optional(),
+  NEXTAUTH_URL: z.string().url().optional(),
+  NEXTAUTH_SECRET: z.string().optional(),
+  AUTH_GOOGLE_ID: z.string().optional(),
+  AUTH_GOOGLE_SECRET: z.string().optional(),
   REPLICATE_API_TOKEN: z.string().optional(),
   REPLICATE_MODEL_VERSION: z.string().optional(),
   LEMON_SQUEEZY_WEBHOOK_SECRET: z.string().optional(),
@@ -27,7 +29,7 @@ const envSchema = z.object({
 const parsedEnv = envSchema.parse(process.env);
 
 export const appConfig = {
-  appName: "PromptClips",
+  appName: "ClipForge",
   demoGenerationLimit: 2,
   minimumDuration: 10,
   maximumDuration: 30,

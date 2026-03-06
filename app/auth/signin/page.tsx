@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AuthForm } from "@/components/auth-form";
+import { GoogleAuthButton } from "@/components/google-auth-button";
 import { PageIntro } from "@/components/ui";
 
 export default function SignInPage() {
@@ -9,16 +9,10 @@ export default function SignInPage() {
         <PageIntro
           eyebrow="Authentication"
           title="Sign in to your workspace"
-          body="Access your credits, queue new renders, and review finished videos."
+          body="Use Google to access your credits, queue new renders, and review finished videos."
         />
         <div className="mt-8">
-          <AuthForm mode="signin" />
-          <p className="mt-6 text-sm text-black/60">
-            Forgot your password?{" "}
-            <Link href="/auth/forgot-password" className="underline underline-offset-4">
-              Reset it
-            </Link>
-          </p>
+          <GoogleAuthButton mode="signin" />
           <p className="mt-2 text-sm text-black/60">
             Need an account?{" "}
             <Link href="/auth/signup" className="underline underline-offset-4">

@@ -1,16 +1,13 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { type ProfileRow, type VideoJobRow } from "@/lib/types";
 
 export const getCurrentUser = cache(async () => {
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user;
+  const session = await getServerSession(authOptions);
+  return session?.user ?? null;
 });
 
 export async function requireUser() {
