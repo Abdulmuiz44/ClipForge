@@ -2,6 +2,10 @@ import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+export function isGoogleAuthConfigured() {
+  return Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);
+}
+
 async function ensureProfile(email: string) {
   const admin = createAdminClient();
   const { error } = await admin.from("profiles").upsert(
@@ -21,12 +25,14 @@ async function ensureProfile(email: string) {
 }
 
 export const authOptions: NextAuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID ?? "",
-      clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
-    }),
-  ],
+  providers: isGoogleAuthConfigured()
+    ? [
+        GoogleProvider({
+          clientId: process.env.AUTH_GOOGLE_ID!,
+          clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+        }),
+      ]
+    : [],
   pages: {
     signIn: "/auth/signin",
   },

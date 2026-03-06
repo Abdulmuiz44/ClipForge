@@ -6,8 +6,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { type ProfileRow, type VideoJobRow } from "@/lib/types";
 
 export const getCurrentUser = cache(async () => {
-  const session = await getServerSession(authOptions);
-  return session?.user ?? null;
+  try {
+    const session = await getServerSession(authOptions);
+    return session?.user ?? null;
+  } catch {
+    return null;
+  }
 });
 
 export async function requireUser() {

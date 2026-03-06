@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { GoogleAuthButton } from "@/components/google-auth-button";
-import { getCurrentUser } from "@/lib/queries";
 
 const nav = [
   { href: "/pricing", label: "Pricing" },
@@ -8,9 +6,7 @@ const nav = [
   { href: "/auth/signin", label: "Sign in" },
 ];
 
-export async function SiteHeader() {
-  const user = await getCurrentUser();
-
+export function SiteHeader() {
   return (
     <header className="shell flex items-center justify-between py-5">
       <Link href="/" className="font-[var(--font-display)] text-3xl leading-none">
@@ -26,7 +22,6 @@ export async function SiteHeader() {
             {item.label}
           </Link>
         ))}
-        {user ? <GoogleAuthButton mode="signout" /> : null}
       </nav>
     </header>
   );
