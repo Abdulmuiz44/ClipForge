@@ -15,8 +15,23 @@ const sans = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "ClipForge",
-  description: "Turn a short prompt into a paid, credit-based AI video clip.",
+  title: {
+    default: "ClipForge | AI Video Generator",
+    template: "%s | ClipForge",
+  },
+  description: "ClipForge is an AI video generator that turns a short prompt into a 10 to 30 second video clip.",
+  keywords: [
+    "AI video generator",
+    "text to video",
+    "AI video maker",
+    "prompt to video",
+    "short AI video clips",
+  ],
+  openGraph: {
+    title: "ClipForge | AI Video Generator",
+    description: "Create short AI videos from a simple text prompt.",
+    type: "website",
+  },
 };
 
 export const dynamic = "force-dynamic";

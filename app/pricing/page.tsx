@@ -16,8 +16,8 @@ export default function PricingPage() {
       <Reveal className="panel-strong px-6 py-8 md:px-8 md:py-10">
         <PageIntro
           eyebrow="Pricing"
-          title="A billing surface that feels operational, not chaotic."
-          body="Borrowing from the reference portal design, this pricing view keeps plans, packs, and usage logic visible in a composed high-trust layout."
+          title="Simple pricing for AI video creation."
+          body="Start small, upgrade when you need more credits, and buy extra packs any time."
         />
       </Reveal>
       <section className="grid gap-4 xl:grid-cols-3">
