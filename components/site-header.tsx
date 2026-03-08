@@ -8,21 +8,26 @@ const nav = [
 
 export function SiteHeader() {
   return (
-    <header className="shell flex items-center justify-between py-5">
-      <Link href="/" className="font-[var(--font-display)] text-3xl leading-none">
-        ClipForge
-      </Link>
-      <nav className="flex items-center gap-2 rounded-full border border-black/10 bg-white/70 p-1 text-sm">
-        {nav.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="rounded-full px-4 py-2 text-black/70 hover:bg-black hover:text-white"
-          >
-            {item.label}
+    <header className="app-frame pb-0">
+      <div className="panel flex items-center justify-between gap-3 px-4 py-4 md:px-6">
+        <div>
+          <Link href="/" className="font-[var(--font-display)] text-3xl leading-none text-white md:text-4xl">
+            ClipForge
           </Link>
-        ))}
-      </nav>
+          <p className="mt-1 text-xs uppercase tracking-[0.28em] text-white/45">AI video control center</p>
+        </div>
+        <nav className="flex flex-wrap items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1.5 text-sm">
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-full px-4 py-2 text-white/72 transition hover:bg-white hover:text-[#09131f]"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
     </header>
   );
 }

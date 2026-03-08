@@ -3,15 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --bg: #f4ecdf;
-  --panel: rgba(255, 248, 239, 0.85);
-  --card: rgba(255, 255, 255, 0.72);
-  --text: #111111;
-  --muted: #5d5349;
-  --line: rgba(17, 17, 17, 0.08);
-  --coral: #ef8354;
-  --teal: #1f7a8c;
-  --moss: #2d6a4f;
+  --bg-0: #08111d;
+  --bg-1: #0d1725;
+  --bg-2: #111e30;
+  --panel: rgba(15, 27, 44, 0.82);
+  --panel-strong: #111f33;
+  --card: rgba(19, 35, 55, 0.92);
+  --card-soft: rgba(21, 39, 62, 0.75);
+  --text: #e7f2ff;
+  --muted: #8fa3bd;
+  --line: rgba(157, 184, 214, 0.12);
+  --mint: #7be0c3;
+  --mint-strong: #4bc9a6;
+  --cyan: #82d2ff;
+  --amber: #f6bd72;
+  --rose: #ff8e9d;
 }
 
 * {
@@ -26,9 +32,9 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(239, 131, 84, 0.25), transparent 28%),
-    radial-gradient(circle at top right, rgba(31, 122, 140, 0.18), transparent 30%),
-    linear-gradient(180deg, #fbf6ee 0%, var(--bg) 48%, #efe3d1 100%);
+    radial-gradient(circle at top left, rgba(123, 224, 195, 0.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(130, 210, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 38%, var(--bg-2) 100%);
 }
 
 @layer utilities {
@@ -49,19 +55,60 @@ body {
 
 @layer components {
   .shell {
-    @apply mx-auto w-full max-w-6xl px-4 md:px-6;
+    @apply mx-auto w-full max-w-7xl px-4 md:px-6;
+  }
+
+  .app-frame {
+    @apply mx-auto min-h-screen max-w-[1480px] px-3 pb-10 pt-4 md:px-6 md:pb-14;
   }
 
   .panel {
     background: var(--panel);
     border: 1px solid var(--line);
-    box-shadow: 0 20px 60px rgba(17, 17, 17, 0.07);
-    @apply rounded-[28px] backdrop-blur;
+    box-shadow: 0 24px 90px rgba(4, 10, 18, 0.45);
+    @apply rounded-[30px] backdrop-blur-xl;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid rgba(17, 17, 17, 0.08);
-    @apply rounded-[24px] backdrop-blur;
+  .panel-strong {
+    background: linear-gradient(180deg, rgba(20, 36, 56, 0.98), rgba(14, 28, 45, 0.96));
+    border: 1px solid rgba(123, 224, 195, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 20px 80px rgba(4, 10, 18, 0.4);
+    @apply rounded-[28px];
+  }
+
+  .soft-card {
+    background: var(--card-soft);
+    border: 1px solid rgba(157, 184, 214, 0.1);
+    @apply rounded-[24px] backdrop-blur-xl;
+  }
+
+  .metric-card {
+    background: linear-gradient(180deg, rgba(20, 37, 58, 0.95), rgba(15, 28, 44, 0.92));
+    border: 1px solid rgba(157, 184, 214, 0.09);
+    @apply rounded-[26px];
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-[#7be0c3] px-5 py-3 text-sm font-semibold text-[#07111d] transition hover:bg-[#98ead2];
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10;
+  }
+
+  .input-dark,
+  .select-dark,
+  .textarea-dark {
+    background: rgba(5, 13, 24, 0.42);
+    border: 1px solid rgba(157, 184, 214, 0.14);
+    color: var(--text);
+    @apply w-full rounded-[18px] px-4 py-3 outline-none transition;
+  }
+
+  .input-dark:focus,
+  .select-dark:focus,
+  .textarea-dark:focus {
+    border-color: rgba(123, 224, 195, 0.5);
+    box-shadow: 0 0 0 4px rgba(123, 224, 195, 0.08);
   }
 }

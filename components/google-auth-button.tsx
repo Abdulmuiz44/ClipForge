@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { signIn, signOut } from "next-auth/react";
 
 type Props = {
@@ -9,25 +10,28 @@ type Props = {
 export function GoogleAuthButton({ mode }: Props) {
   if (mode === "signout") {
     return (
-      <button
+      <motion.button
         type="button"
+        whileHover={{ y: -2, scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => signOut({ callbackUrl: "/" })}
-        className="rounded-full border border-black/10 bg-white/80 px-4 py-2 text-sm font-medium hover:bg-black hover:text-white"
+        className="button-secondary"
       >
         Sign out
-      </button>
+      </motion.button>
     );
   }
 
-  const label = mode === "signup" ? "Continue with Google" : "Continue with Google";
-
   return (
-    <button
+    <motion.button
       type="button"
+      whileHover={{ y: -3, scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-      className="inline-flex items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-medium text-white"
+      className="button-primary gap-3"
     >
-      {label}
-    </button>
+      <span className="grid size-8 place-items-center rounded-full bg-[#08111d] text-[#7be0c3]">G</span>
+      Continue with Google
+    </motion.button>
   );
 }

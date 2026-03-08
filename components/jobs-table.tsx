@@ -1,65 +1,58 @@
+"use client";
+
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
 import { EmptyState } from "@/components/ui";
 import { type VideoJobRow } from "@/lib/types";
 
 function statusTone(status: string) {
   switch (status) {
     case "COMPLETED":
-      return "bg-moss/10 text-moss";
+      return "bg-[#7be0c3]/14 text-[#7be0c3]";
     case "FAILED":
-      return "bg-red-500/10 text-red-600";
+      return "bg-[#ff8e9d]/12 text-[#ff8e9d]";
     case "PROCESSING":
-      return "bg-teal/10 text-teal";
+      return "bg-[#82d2ff]/12 text-[#82d2ff]";
     default:
-      return "bg-black/5 text-black/60";
+      return "bg-white/8 text-white/55";
   }
 }
 
 export function JobsTable({ jobs }: { jobs: VideoJobRow[] }) {
   if (!jobs.length) {
-    return <EmptyState title="No videos yet" body="Your last 10 jobs will appear here." />;
+    return <EmptyState title="No videos yet" body="Your recent renders will populate this queue once you submit a job." />;
   }
 
   return (
-    <div className="overflow-hidden rounded-[24px] border border-black/10">
-      <table className="w-full border-collapse text-left text-sm">
-        <thead className="bg-black text-white">
-          <tr>
-            <th className="px-4 py-3 font-medium">Prompt</th>
-            <th className="px-4 py-3 font-medium">Status</th>
-            <th className="px-4 py-3 font-medium">Credits</th>
-            <th className="px-4 py-3 font-medium">Created</th>
-            <th className="px-4 py-3 font-medium">View</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white/75">
-          {jobs.map((job) => (
-            <tr key={job.id} className="border-t border-black/8">
-              <td className="px-4 py-4">
-                <p className="max-w-md truncate font-medium">{job.prompt}</p>
-                <p className="mt-1 text-xs text-black/55">
-                  {job.duration_seconds}s • {job.aspect_ratio} • {job.style}
-                </p>
-              </td>
-              <td className="px-4 py-4">
-                <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusTone(job.status)}`}>
-                  {job.status}
-                </span>
-              </td>
-              <td className="px-4 py-4">{job.cost_credits}</td>
-              <td className="px-4 py-4 text-black/60">
-                {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
-              </td>
-              <td className="px-4 py-4">
-                <Link href={`/videos/${job.id}`} className="font-medium underline underline-offset-4">
-                  Open
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-4">
+      {jobs.map((job, index) => (
+        <motion.div
+          key={job.id}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: index * 0.05 }}
+          className="soft-card flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between"
+        >
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusTone(job.status)}`}>
+                {job.status}
+              </span>
+              <span className="text-xs uppercase tracking-[0.22em] text-white/35">{job.cost_credits} credits</span>
+            </div>
+            <p className="mt-3 truncate text-base font-semibold text-white md:text-lg">{job.prompt}</p>
+            <p className="mt-2 text-sm text-[#8fa3bd]">
+              {job.duration_seconds}s | {job.aspect_ratio} | {job.style} | {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href={`/videos/${job.id}`} className="button-secondary">
+              View details
+            </Link>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 }

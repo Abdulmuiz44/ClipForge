@@ -14,9 +14,11 @@ export function PageIntro({
 }) {
   return (
     <div className="space-y-4">
-      <p className="text-xs uppercase tracking-[0.24em] text-black/55">{eyebrow}</p>
-      <h1 className="font-[var(--font-display)] text-4xl leading-none md:text-6xl">{title}</h1>
-      <p className="max-w-2xl text-base leading-7 text-black/68">{body}</p>
+      <p className="text-xs uppercase tracking-[0.28em] text-[#7be0c3]">{eyebrow}</p>
+      <h1 className="max-w-4xl font-[var(--font-display)] text-4xl leading-none text-white md:text-6xl">
+        {title}
+      </h1>
+      <p className="max-w-3xl text-base leading-7 text-[#8fa3bd] md:text-lg">{body}</p>
       {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
     </div>
   );
@@ -32,10 +34,10 @@ export function StatCard({
   hint?: string;
 }) {
   return (
-    <div className="glass-card p-5">
-      <p className="text-xs uppercase tracking-[0.2em] text-black/50">{label}</p>
-      <p className="mt-3 text-3xl font-semibold">{value}</p>
-      {hint ? <p className="mt-1 text-sm text-black/60">{hint}</p> : null}
+    <div className="metric-card p-5">
+      <p className="text-xs uppercase tracking-[0.24em] text-white/45">{label}</p>
+      <p className="mt-4 text-3xl font-semibold text-white">{value}</p>
+      {hint ? <p className="mt-2 text-sm text-[#8fa3bd]">{hint}</p> : null}
     </div>
   );
 }
@@ -52,10 +54,10 @@ export function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className={cn("glass-card p-6", className)}>
-      <div className="mb-5">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        {description ? <p className="mt-1 text-sm text-black/60">{description}</p> : null}
+    <section className={cn("panel-strong p-6 md:p-7", className)}>
+      <div className="mb-6 flex flex-col gap-2">
+        <h2 className="text-xl font-semibold text-white md:text-2xl">{title}</h2>
+        {description ? <p className="text-sm leading-6 text-[#8fa3bd]">{description}</p> : null}
       </div>
       {children}
     </section>
@@ -70,9 +72,9 @@ export function EmptyState({
   body: string;
 }) {
   return (
-    <div className="rounded-[20px] border border-dashed border-black/15 bg-white/55 px-5 py-8 text-center">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-black/60">{body}</p>
+    <div className="soft-card px-5 py-10 text-center">
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-[#8fa3bd]">{body}</p>
     </div>
   );
 }
