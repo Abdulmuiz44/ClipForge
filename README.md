@@ -1,15 +1,31 @@
 # ClipForge
 
-ClipForge is a lean AI video MVP built with Next.js 14, NextAuth Google OAuth, Supabase, Replicate, and Lemon Squeezy. It turns a short text prompt into a 10-30 second AI video job with credit accounting, paid access control, and a simple dashboard.
+ClipForge is a lean AI video generation platform built with Next.js 14, NextAuth Google OAuth, Supabase, Replicate, and Lemon Squeezy. It features a modern UI inspired by Claude Cowork, supporting both light and dark modes, and turns text prompts into 10-30 second AI videos using a flexible credit-based pricing model.
+
+## Redesigned UI
+
+The platform features a clean, high-performance interface based on the Claude Cowork design system:
+- **Dynamic Theming:** Seamless support for Light and Dark modes.
+- **Modern Typography:** Uses 'Instrument Serif' for display and 'Space Grotesk' for interface elements.
+- **Responsive Design:** Fully optimized for mobile and desktop experiences.
+- **Modern Color Palette:** Built using OKLCH/HSL CSS variables for consistent and accessible styling.
+
+## Credit-Based Pricing
+
+ClipForge uses a "pay-as-you-go" credit system instead of traditional subscriptions:
+- **No Monthly Fees:** Users only pay for the credits they need.
+- **Custom Amounts:** Users can purchase predefined packs (100, 500, 2000 credits) or select a custom amount via a slider.
+- **Secure Payments:** Integrated with Lemon Squeezy for handling checkouts and dynamic credit allocations.
+- **Non-Expiring Credits:** Credits are added to the user balance and never expire.
 
 ## Stack
 
 - Next.js 14 App Router + TypeScript
-- Tailwind CSS
+- Tailwind CSS (with `next-themes` for dark mode)
 - NextAuth Google OAuth
 - Supabase Postgres + storage
 - Replicate text-to-video adapter in `lib/videoProvider.ts`
-- Lemon Squeezy checkout links + webhook handling
+- Lemon Squeezy checkout integration (dynamic quantities)
 - Vercel Cron compatible worker endpoint at `/api/jobs/process`
 
 ## Local setup
@@ -31,7 +47,8 @@ pnpm install
 - `REPLICATE_API_TOKEN`
 - `REPLICATE_MODEL_VERSION`
 - `LEMON_SQUEEZY_WEBHOOK_SECRET`
-- Lemon checkout URLs and variant IDs
+- `LS_CREDIT_VARIANT_ID`: Your Lemon Squeezy variant ID for credits.
+- `NEXT_PUBLIC_LS_CREDIT_CHECKOUT_URL`: Your Lemon Squeezy checkout URL.
 - `CRON_SECRET`
 
 3. Apply the SQL schema in `supabase/migrations/0001_clipforge.sql` to your Supabase project.
@@ -51,32 +68,18 @@ pnpm dev
 ## Product behavior
 
 - Users sign in with Google OAuth via NextAuth.
-- Supabase is used only for database and storage concerns.
 - Unpaid users get `2` watermarked demo generations.
 - Paid users can render non-demo clips if they have enough credits.
-- Credit cost is configurable in `lib/credits.ts`.
+- Credit cost is determined at generation time; the price per credit is configurable in `lib/config.ts`.
 - Credits are reserved at queue time, finalized on completion, and refunded on failure.
 - Job state machine: `QUEUED -> PROCESSING -> COMPLETED | FAILED`
 
-## Lemon Squeezy
+## Lemon Squeezy Integration
 
-- Checkout URLs are displayed on `/pricing` and `/dashboard`.
+- Checkout links are dynamically generated with `quantity` parameters to support "pay-for-what-you-use".
 - Webhook endpoint: `/api/webhooks/lemonsqueezy`
-- Variant-to-credit/plan mapping lives in `lib/payments/catalog.ts`
-- Webhook verification and parsing live in `lib/payments/lemonsqueezy.ts`
-- Users are resolved by Google email and stored in Supabase `profiles`
-
-Recommended webhook custom data:
-
-```json
-{
-  "user_email": "customer@example.com"
-}
-```
-
-## Video provider swap
-
-Replicate is isolated behind `lib/videoProvider.ts`. To switch providers, keep the same `createVideoJob` and `getVideoJobStatus` contract and replace only that module.
+- Webhook handler resolves credits based on the quantity purchased in the order.
+- Variant mapping lives in `lib/payments/catalog.ts`
 
 ## Tests
 
@@ -85,8 +88,7 @@ pnpm test
 ```
 
 Current tests cover:
-
-- Credit cost boundaries
-- Demo gating and job payload creation
-- Lemon Squeezy signature parsing and mapping
-- Prompt watermark behavior for demo jobs
+- Credit cost boundaries and allocation logic.
+- Demo gating and job payload creation.
+- Lemon Squeezy signature verification and quantity-based credit mapping.
+- UI theme support and overall platform behavior.

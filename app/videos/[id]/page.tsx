@@ -11,15 +11,17 @@ export default async function VideoDetailPage({ params }: { params: { id: string
     const job = await getJobForCurrentUser(params.id);
 
     return (
-      <main className="app-frame space-y-8">
-        <Reveal className="panel-strong px-6 py-8 md:px-8 md:py-10">
+      <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 space-y-8">
+        <Reveal className="rounded-2xl border bg-card px-6 py-8 md:px-8 md:py-10 shadow-sm">
           <PageIntro
             eyebrow="Video detail"
-            title="Playback, lifecycle, and output diagnostics in one screen."
+            title="Playback & Lifecycle"
             body={job.prompt}
           />
         </Reveal>
-        <VideoStatus initialJob={job} />
+        <div className="rounded-2xl border bg-card p-6 shadow-sm">
+          <VideoStatus initialJob={job} />
+        </div>
       </main>
     );
   } catch {
