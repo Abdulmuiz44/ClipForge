@@ -28,9 +28,9 @@ export function GoogleAuthButton({ mode }: Props) {
       whileHover={{ y: -3, scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
       onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-      className="button-primary gap-3"
+      className="button-primary w-full gap-3 py-4"
     >
-      <span className="grid size-8 place-items-center rounded-full bg-[#08111d] text-[#7be0c3]">G</span>
+      <div className="flex size-6 items-center justify-center rounded-full bg-white text-black font-bold text-sm">G</div>
       Continue with Google
     </motion.button>
   );
