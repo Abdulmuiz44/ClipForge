@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { type PlanTier } from "@/lib/types";
 
 const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
@@ -11,18 +10,8 @@ const envSchema = z.object({
   REPLICATE_API_TOKEN: z.string().optional(),
   REPLICATE_MODEL_VERSION: z.string().optional(),
   LEMON_SQUEEZY_WEBHOOK_SECRET: z.string().optional(),
-  LS_STARTER_VARIANT_ID: z.string().optional(),
-  LS_PRO_VARIANT_ID: z.string().optional(),
-  LS_ENTERPRISE_VARIANT_ID: z.string().optional(),
-  LS_CREDIT_PACK_100_VARIANT_ID: z.string().optional(),
-  LS_CREDIT_PACK_500_VARIANT_ID: z.string().optional(),
-  LS_CREDIT_PACK_2000_VARIANT_ID: z.string().optional(),
-  NEXT_PUBLIC_LS_STARTER_CHECKOUT_URL: z.string().url().optional(),
-  NEXT_PUBLIC_LS_PRO_CHECKOUT_URL: z.string().url().optional(),
-  NEXT_PUBLIC_LS_ENTERPRISE_CHECKOUT_URL: z.string().url().optional(),
-  NEXT_PUBLIC_LS_CREDIT_PACK_100_URL: z.string().url().optional(),
-  NEXT_PUBLIC_LS_CREDIT_PACK_500_URL: z.string().url().optional(),
-  NEXT_PUBLIC_LS_CREDIT_PACK_2000_URL: z.string().url().optional(),
+  LS_CREDIT_VARIANT_ID: z.string().optional(),
+  NEXT_PUBLIC_LS_CREDIT_CHECKOUT_URL: z.string().url().optional(),
   CRON_SECRET: z.string().optional(),
 });
 
@@ -40,50 +29,7 @@ export const appConfig = {
   styles: ["cinematic", "product", "anime", "surreal"],
   aspectRatios: ["16:9", "9:16", "1:1"],
   providerName: "replicate",
+  creditPrice: 0.1, // $0.10 per credit
 } as const;
-
-export type PlanCatalogEntry = {
-  name: string;
-  tier: PlanTier;
-  monthlyPrice: number;
-  creditsPerMonth: number;
-  description: string;
-  checkoutUrl: string;
-};
-
-export const planCatalog: PlanCatalogEntry[] = [
-  {
-    name: "Starter",
-    tier: "STARTER",
-    monthlyPrice: 9,
-    creditsPerMonth: 80,
-    description: "Best for trying ClipForge with a small monthly credit allowance.",
-    checkoutUrl: parsedEnv.NEXT_PUBLIC_LS_STARTER_CHECKOUT_URL ?? "#",
-  },
-  {
-    name: "Pro",
-    tier: "PRO",
-    monthlyPrice: 19,
-    creditsPerMonth: 220,
-    description: "For creators making videos every week and needing faster throughput.",
-    checkoutUrl: parsedEnv.NEXT_PUBLIC_LS_PRO_CHECKOUT_URL ?? "#",
-  },
-  {
-    name: "Scale",
-    tier: "ENTERPRISE",
-    monthlyPrice: 99,
-    creditsPerMonth: 1400,
-    description: "For teams, agencies, and high-volume AI video production.",
-    checkoutUrl: parsedEnv.NEXT_PUBLIC_LS_ENTERPRISE_CHECKOUT_URL ?? "#",
-  },
-];
-
-export function getCheckoutLinks() {
-  return [
-    { label: "Buy 100 credits", url: parsedEnv.NEXT_PUBLIC_LS_CREDIT_PACK_100_URL ?? "#" },
-    { label: "Buy 500 credits", url: parsedEnv.NEXT_PUBLIC_LS_CREDIT_PACK_500_URL ?? "#" },
-    { label: "Upgrade plan", url: parsedEnv.NEXT_PUBLIC_LS_PRO_CHECKOUT_URL ?? "#" },
-  ];
-}
 
 export const env = parsedEnv;

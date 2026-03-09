@@ -1,46 +1,78 @@
-import { PlanCard } from "@/components/plan-card";
-import { Reveal } from "@/components/reveal";
-import { PageIntro, SectionCard } from "@/components/ui";
-import { formatCurrency } from "@/lib/utils";
-import { planCatalog } from "@/lib/config";
+"use client";
 
-const packs = [
-  { label: "100 credits", price: 12, note: "Fast prompt experiments" },
-  { label: "500 credits", price: 45, note: "For weekly production cycles" },
-  { label: "2000 credits", price: 149, note: "High-throughput creator teams" },
-];
+import { useState } from "react";
+import { Reveal } from "@/components/reveal";
+import { SectionCard } from "@/components/ui";
+import { appConfig, env } from "@/lib/config";
+import { formatCurrency } from "@/lib/utils";
+import { PlanCard } from "@/components/plan-card";
 
 export default function PricingPage() {
+  const [credits, setCredits] = useState(100);
+  const price = credits * appConfig.creditPrice;
+
+  const handleCheckout = (amount?: number) => {
+    const finalCredits = amount ?? credits;
+    const baseUrl = env.NEXT_PUBLIC_LS_CREDIT_CHECKOUT_URL;
+    if (!baseUrl || baseUrl === "#") {
+      alert("Checkout URL not configured");
+      return;
+    }
+    const checkoutUrl = new URL(baseUrl);
+    checkoutUrl.searchParams.set("quantity", finalCredits.toString());
+    window.location.href = checkoutUrl.toString();
+  };
+
   return (
-    <main className="app-frame space-y-8">
-      <Reveal className="panel-strong px-6 py-8 md:px-8 md:py-10">
-        <PageIntro
-          eyebrow="Pricing"
-          title="Simple pricing for AI video creation."
-          body="Start small, upgrade when you need more credits, and buy extra packs any time."
-        />
+    <main className="mx-auto max-w-6xl px-4 py-12 md:py-24">
+      <Reveal className="mb-12 text-center">
+        <h1 className="mb-4 text-4xl font-bold md:text-6xl tracking-tight">Simple, credit-based pricing.</h1>
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          No subscriptions. No hidden fees. Pay only for what you use. Buy credits as you need them.
+        </p>
       </Reveal>
-      <section className="grid gap-4 xl:grid-cols-3">
-        {planCatalog.map((plan, index) => (
-          <Reveal key={plan.tier} delay={0.05 * index}>
-            <PlanCard plan={plan} />
+
+      <div className="grid gap-6 md:grid-cols-3 mb-16">
+        {[100, 500, 2000].map((amount, i) => (
+          <Reveal key={amount} delay={0.1 * i}>
+            <PlanCard credits={amount} onClick={() => handleCheckout(amount)} />
           </Reveal>
         ))}
-      </section>
-      <Reveal delay={0.12}>
-        <SectionCard
-          title="Credit packs"
-          description="One-time purchases top up the same credit balance used by paid renders and retries."
-        >
-          <div className="grid gap-4 md:grid-cols-3">
-            {packs.map((pack) => (
-              <div key={pack.label} className="soft-card p-5">
-                <p className="text-xs uppercase tracking-[0.22em] text-[#7be0c3]">Pack</p>
-                <p className="mt-3 text-2xl font-semibold text-white">{pack.label}</p>
-                <p className="mt-2 text-sm text-[#8fa3bd]">{pack.note}</p>
-                <p className="mt-5 text-xl font-semibold text-white">{formatCurrency(pack.price)}</p>
+      </div>
+
+      <Reveal delay={0.3}>
+        <SectionCard title="Custom Amount" description="Choose exactly how many credits you want to purchase.">
+          <div className="space-y-8 py-4">
+            <div className="space-y-4">
+              <div className="flex justify-between text-sm font-medium">
+                <span>Amount: {credits} credits</span>
+                <span>{formatCurrency(price)}</span>
               </div>
-            ))}
+              <input
+                type="range"
+                min="10"
+                max="5000"
+                step="10"
+                value={credits}
+                onChange={(e) => setCredits(parseInt(e.target.value))}
+                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-secondary accent-primary"
+              />
+            </div>
+
+            <div className="rounded-xl bg-muted/50 p-6 text-center">
+              <p className="mb-2 text-sm text-muted-foreground">Total Price</p>
+              <p className="mb-6 text-5xl font-extrabold">{formatCurrency(price)}</p>
+              <button
+                onClick={() => handleCheckout()}
+                className="button-primary w-full max-w-xs py-4 text-lg"
+              >
+                Buy {credits} credits
+              </button>
+            </div>
+
+            <p className="text-center text-xs text-muted-foreground">
+              Payments are securely processed by Lemon Squeezy. Credits never expire.
+            </p>
           </div>
         </SectionCard>
       </Reveal>

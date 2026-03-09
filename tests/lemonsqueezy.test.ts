@@ -19,7 +19,8 @@ describe("lemon webhook helpers", () => {
         attributes: {
           total: 1900,
           currency: "USD",
-          variant_id: "starter",
+          variant_id: "credits",
+          quantity: 100,
           custom_data: {
             user_email: "test@example.com",
           },
@@ -28,7 +29,8 @@ describe("lemon webhook helpers", () => {
     });
 
     expect(payload.email).toBe("test@example.com");
-    expect(payload.variantId).toBe("starter");
+    expect(payload.variantId).toBe("credits");
+    expect(payload.quantity).toBe(100);
   });
 
   it("resolves catalog mappings", () => {
@@ -36,12 +38,13 @@ describe("lemon webhook helpers", () => {
       eventName: "order_created",
       eventId: "evt_1",
       email: "test@example.com",
-      amount: 1900,
+      amount: 1000,
       currency: "USD",
-      variantId: "starter",
+      variantId: "credits",
+      quantity: 100,
     });
 
-    expect(effect.planTierAfter).toBe("STARTER");
-    expect(effect.creditsAdded).toBe(120);
+    expect(effect.planTierAfter).toBe("FREE");
+    expect(effect.creditsAdded).toBe(100);
   });
 });
