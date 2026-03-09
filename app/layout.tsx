@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Serif, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const display = Instrument_Serif({
   subsets: ["latin"],
@@ -42,13 +43,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${display.variable} ${sans.variable} font-sans`}>
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(circle_at_top,rgba(239,131,84,0.20),transparent_60%)]" />
-          <SiteHeader />
-          {children}
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="relative min-h-screen">
+            <SiteHeader />
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

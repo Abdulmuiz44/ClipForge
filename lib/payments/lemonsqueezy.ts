@@ -9,6 +9,7 @@ export type LemonEvent = {
   amount: number;
   currency: string;
   variantId: string;
+  quantity: number;
 };
 
 export function verifyLemonSignature(rawBody: string, secret: string, signature: string | null) {
@@ -29,6 +30,7 @@ export function parseLemonPayload(payload: any): LemonEvent {
   const custom = attributes.custom_data ?? {};
   const variantId = String(attributes.variant_id ?? "");
   const email = String(custom.user_email ?? attributes.user_email ?? attributes.email ?? "");
+  const quantity = Number(attributes.first_order_item?.quantity ?? attributes.quantity ?? 1);
 
   if (!payload?.meta?.event_name || !payload?.data?.id || !email || !variantId) {
     throw new Error("Invalid Lemon Squeezy payload.");
@@ -41,6 +43,7 @@ export function parseLemonPayload(payload: any): LemonEvent {
     amount: Number(attributes.total ?? attributes.subtotal ?? 0),
     currency: String(attributes.currency ?? "USD"),
     variantId,
+    quantity,
   };
 }
 
@@ -50,6 +53,14 @@ export function resolveCatalogEffect(payload: LemonEvent) {
   if (!effect) {
     logger.error("Unknown Lemon Squeezy variant", payload);
     throw new Error("No catalog mapping found for Lemon Squeezy variant.");
+  }
+
+  // If the variant is for credits, the quantity is the number of credits
+  if (payload.variantId === (process.env.LS_CREDIT_VARIANT_ID ?? "credits")) {
+    return {
+      ...effect,
+      creditsAdded: payload.quantity,
+    };
   }
 
   return effect;
