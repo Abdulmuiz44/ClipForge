@@ -80,6 +80,12 @@ export async function incrementDemoUsage(profileId: string) {
   }
 }
 
+export function triggerJobProcessingKick() {
+  void processQueuedJobs(1).catch((error) => {
+    logger.error("Immediate processing kick failed", { error });
+  });
+}
+
 export async function processQueuedJobs(batchSize = 5) {
   const admin = createAdminClient();
   const now = new Date().toISOString();
@@ -98,6 +104,29 @@ export async function processQueuedJobs(batchSize = 5) {
   for (const job of jobs ?? []) {
     try {
       if (!job.provider_job_id) {
+        const nextRetry = addMinutes(new Date(), 2).toISOString();
+        const { data: claimedJobs, error: claimError } = await admin
+          .from("video_jobs")
+          .update({
+            status: "PROCESSING",
+            attempts: job.attempts + 1,
+            last_polled_at: now,
+            next_retry_at: nextRetry,
+          })
+          .eq("id", job.id)
+          .eq("status", "QUEUED")
+          .is("provider_job_id", null)
+          .eq("attempts", job.attempts)
+          .select("id");
+
+        if (claimError) {
+          throw new Error(claimError.message);
+        }
+
+        if (!claimedJobs?.length) {
+          continue;
+        }
+
         const created = await createVideoJob({
           prompt: job.prompt,
           durationSeconds: job.duration_seconds,
@@ -112,11 +141,32 @@ export async function processQueuedJobs(batchSize = 5) {
           .update({
             status: "PROCESSING",
             provider_job_id: created.providerJobId,
-            attempts: job.attempts + 1,
             last_polled_at: now,
           })
-          .eq("id", job.id);
+          .eq("id", job.id)
+          .is("provider_job_id", null);
 
+        continue;
+      }
+
+      const { data: leasedJobs, error: leaseError } = await admin
+        .from("video_jobs")
+        .update({
+          attempts: job.attempts + 1,
+          last_polled_at: now,
+          next_retry_at: addMinutes(new Date(), Math.min(2 * (job.attempts + 1), 10)).toISOString(),
+        })
+        .eq("id", job.id)
+        .eq("status", "PROCESSING")
+        .eq("provider_job_id", job.provider_job_id)
+        .eq("attempts", job.attempts)
+        .select("id");
+
+      if (leaseError) {
+        throw new Error(leaseError.message);
+      }
+
+      if (!leasedJobs?.length) {
         continue;
       }
 
@@ -137,17 +187,6 @@ export async function processQueuedJobs(batchSize = 5) {
         });
         continue;
       }
-
-      const nextRetry = addMinutes(new Date(), Math.min(2 * (job.attempts + 1), 10));
-      await admin
-        .from("video_jobs")
-        .update({
-          status: "PROCESSING",
-          attempts: job.attempts + 1,
-          last_polled_at: now,
-          next_retry_at: nextRetry.toISOString(),
-        })
-        .eq("id", job.id);
     } catch (error) {
       logger.error("Job processing failed", { jobId: job.id, error });
       await admin.rpc("mark_job_retry", {

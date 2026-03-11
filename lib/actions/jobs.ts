@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { appConfig } from "@/lib/config";
-import { buildJobInsert, incrementDemoUsage, reserveCreditsForQueuedJob } from "@/lib/jobs";
+import { buildJobInsert, incrementDemoUsage, reserveCreditsForQueuedJob, triggerJobProcessingKick } from "@/lib/jobs";
+import { logger } from "@/lib/logger";
 import { getProfileForCurrentUser } from "@/lib/queries";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -61,6 +62,12 @@ export async function createVideoJobAction(_: FormState, formData: FormData): Pr
     await reserveCreditsForQueuedJob(profile.id, payload.credits_reserved, payload.is_demo);
     if (payload.is_demo) {
       await incrementDemoUsage(profile.id);
+    }
+
+    try {
+      triggerJobProcessingKick();
+    } catch (kickError) {
+      logger.warn("Could not trigger immediate job processing kick", { kickError });
     }
 
     revalidatePath("/dashboard");

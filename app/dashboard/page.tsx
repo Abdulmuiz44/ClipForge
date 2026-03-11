@@ -1,6 +1,7 @@
 import { BuyButtons } from "@/components/buy-buttons";
 import { CreditBadge } from "@/components/credit-badge";
 import { JobForm } from "@/components/job-form";
+import { JobsLiveRefresh } from "@/components/jobs-live-refresh";
 import { JobsTable } from "@/components/jobs-table";
 import { Reveal } from "@/components/reveal";
 import { PageIntro, SectionCard, StatCard } from "@/components/ui";
@@ -13,6 +14,7 @@ export default async function DashboardPage() {
     getProfileForCurrentUser(),
     getRecentJobsForCurrentUser(),
   ]);
+  const hasActiveJobs = jobs.some((job) => job.status === "QUEUED" || job.status === "PROCESSING");
 
   return (
     <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 md:px-6">
@@ -34,6 +36,7 @@ export default async function DashboardPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <SectionCard title="Recent clip generations" description="Track render progress and open any clip to preview or download.">
+              <JobsLiveRefresh hasActiveJobs={hasActiveJobs} />
               <JobsTable jobs={jobs} />
             </SectionCard>
           </Reveal>
