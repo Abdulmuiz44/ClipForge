@@ -11,11 +11,11 @@ export default async function VideoDetailPage({ params }: { params: { id: string
     const job = await getJobForCurrentUser(params.id);
 
     return (
-      <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 space-y-8">
-        <Reveal className="rounded-2xl border bg-card px-6 py-8 md:px-8 md:py-10 shadow-sm">
+      <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 md:px-6">
+        <Reveal className="rounded-2xl border bg-card px-6 py-8 shadow-sm md:px-8 md:py-10">
           <PageIntro
-            eyebrow="Video detail"
-            title="Playback & Lifecycle"
+            eyebrow="Clip output"
+            title="Preview, track, and export your generated video"
             body={job.prompt}
           />
         </Reveal>

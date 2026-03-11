@@ -15,12 +15,12 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 space-y-8">
-      <Reveal className="rounded-2xl border bg-card px-6 py-8 md:px-8 md:py-10 shadow-sm">
+    <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 md:px-6">
+      <Reveal className="rounded-2xl border bg-card px-6 py-8 shadow-sm md:px-8 md:py-10">
         <PageIntro
-          eyebrow="Control Center"
-          title="Monitor video operations in your AI portal."
-          body="Your central workspace for generating clips, tracking renders, and managing your credit balance."
+          eyebrow="Clip studio"
+          title="Create short AI videos from a single prompt."
+          body="Write a prompt, set duration and format, and generate a 10 to 30 second clip for content, marketing, or storytelling."
           actions={<BuyButtons />}
         />
       </Reveal>
@@ -28,12 +28,12 @@ export default async function DashboardPage() {
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
         <div className="space-y-6">
           <Reveal className="grid gap-4 md:grid-cols-3">
-            <StatCard label="Credits" value={String(profile.credits_balance)} hint="Available balance" />
-            <StatCard label="Status" value={profile.has_paid_access ? "Pro" : "Free"} hint={profile.has_paid_access ? "Paid access active" : "Demo mode"} />
-            <StatCard label="Demo usage" value={`${profile.demo_generations_used}/2`} hint="Watermarked renders" />
+            <StatCard label="Credits" value={String(profile.credits_balance)} hint="Available to generate clips" />
+            <StatCard label="Access" value={profile.has_paid_access ? "Credit unlocked" : "Demo"} hint={profile.has_paid_access ? "Pay-as-you-go generation" : "2 free watermarked clips"} />
+            <StatCard label="Demo clips" value={`${profile.demo_generations_used}/2`} hint="Watermarked previews" />
           </Reveal>
           <Reveal delay={0.08}>
-            <SectionCard title="Render queue" description="Your most recent jobs, organized for quick status scanning.">
+            <SectionCard title="Recent clip generations" description="Track render progress and open any clip to preview or download.">
               <JobsTable jobs={jobs} />
             </SectionCard>
           </Reveal>
@@ -41,7 +41,7 @@ export default async function DashboardPage() {
 
         <div className="space-y-6">
           <Reveal delay={0.12}>
-            <SectionCard title="New video job" description="Shape, duration, and style controls for your next render.">
+            <SectionCard title="Generate a new clip" description="Start with a clear prompt, then set clip length, format, and style.">
               <div className="mb-5">
                 <CreditBadge credits={profile.credits_balance} />
               </div>
@@ -49,11 +49,11 @@ export default async function DashboardPage() {
             </SectionCard>
           </Reveal>
           <Reveal delay={0.16} className="rounded-xl border bg-muted/30 p-6">
-            <p className="text-xs font-bold uppercase tracking-widest text-primary">Ops notes</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-primary">Before you generate</p>
             <div className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-              <p>Credits are reserved on queue creation and released automatically if the job fails.</p>
-              <p>Demo renders remain available until you exhaust the free allowance.</p>
-              <p>Payments top up the same balance surfaced in this workspace.</p>
+              <p>ClipForge is designed for short 10–30 second outputs that are easy to repurpose across channels.</p>
+              <p>Credits are reserved when you queue a job and automatically released if generation fails.</p>
+              <p>Use vertical (9:16) for social, landscape (16:9) for ads and explainers, or square (1:1) for feeds.</p>
             </div>
           </Reveal>
         </div>
