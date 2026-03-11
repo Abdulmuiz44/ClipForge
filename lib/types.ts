@@ -7,6 +7,9 @@ export type ProfileRow = {
   email: string;
   credits_balance: number;
   reserved_credits: number;
+  trial_credits_granted: number;
+  trial_credits_expires_at: string | null;
+  trial_credits_consumed: number;
   plan_tier: PlanTier;
   has_paid_access: boolean;
   demo_generations_used: number;

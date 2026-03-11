@@ -21,6 +21,29 @@ export function canUseDemo(profile: ProfileRow) {
   return profile.demo_generations_used < appConfig.demoGenerationLimit;
 }
 
-export function hasEnoughCredits(profile: ProfileRow, creditsCost: number) {
-  return profile.credits_balance >= creditsCost;
+export function getTrialCreditsRemaining(profile: ProfileRow, now = new Date()): number {
+  if (!profile.trial_credits_expires_at) {
+    return Math.max(profile.trial_credits_granted - profile.trial_credits_consumed, 0);
+  }
+
+  if (new Date(profile.trial_credits_expires_at) <= now) {
+    return 0;
+  }
+
+  return Math.max(profile.trial_credits_granted - profile.trial_credits_consumed, 0);
+}
+
+export function getSpendableCredits(profile: ProfileRow, now = new Date()): number {
+  const trialRemaining = getTrialCreditsRemaining(profile, now);
+  const expiredTrial =
+    profile.trial_credits_expires_at &&
+    new Date(profile.trial_credits_expires_at) <= now
+      ? Math.max(profile.trial_credits_granted - profile.trial_credits_consumed, 0)
+      : 0;
+
+  return Math.max(profile.credits_balance - expiredTrial, 0);
+}
+
+export function hasEnoughCredits(profile: ProfileRow, creditsCost: number, now = new Date()) {
+  return getSpendableCredits(profile, now) >= creditsCost;
 }
