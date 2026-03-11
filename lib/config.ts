@@ -22,10 +22,25 @@ export const appConfig = {
   demoGenerationLimit: 2,
   minimumDuration: 10,
   maximumDuration: 30,
-  creditBands: [
+  baseCreditsByDuration: [
     { min: 10, max: 20, credits: 5 },
     { min: 21, max: 30, credits: 8 },
   ],
+  resolutionTiers: {
+    sd: { label: "480p", multiplier: 1 },
+    hd: { label: "720p", multiplier: 1.35 },
+    fullhd: { label: "1080p", multiplier: 1.8 },
+  },
+  qualityTiers: {
+    draft: { label: "Draft", multiplier: 1 },
+    standard: { label: "Standard", multiplier: 1.2 },
+    premium: { label: "Premium", multiplier: 1.45 },
+  },
+  aspectRatioMultipliers: {
+    "16:9": 1,
+    "9:16": 1,
+    "1:1": 0.95,
+  },
   styles: ["cinematic", "product", "anime", "surreal"],
   aspectRatios: ["16:9", "9:16", "1:1"],
   providerName: "replicate",

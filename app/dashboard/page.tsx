@@ -55,7 +55,7 @@ export default async function DashboardPage() {
             <p className="text-xs font-bold uppercase tracking-widest text-primary">Before you generate</p>
             <div className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
               <p>ClipForge is designed for short 10–30 second outputs that are easy to repurpose across channels.</p>
-              <p>Credits are reserved when you queue a job and automatically released if generation fails.</p>
+              <p>Credits are priced by duration, resolution, quality tier, and aspect ratio, then reserved when you queue a job.</p>
               <p>Use vertical (9:16) for social, landscape (16:9) for ads and explainers, or square (1:1) for feeds.</p>
             </div>
           </Reveal>

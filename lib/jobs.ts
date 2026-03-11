@@ -1,6 +1,6 @@
 import { addMinutes } from "date-fns";
 import { appConfig } from "@/lib/config";
-import { canCreateNonDemoJob, canUseDemo, calculateCreditsCost, hasEnoughCredits } from "@/lib/credits";
+import { canCreateNonDemoJob, canUseDemo, calculateCreditsCost, hasEnoughCredits, type QualityTier, type ResolutionTier } from "@/lib/credits";
 import { logger } from "@/lib/logger";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createVideoJob, getVideoJobStatus } from "@/lib/videoProvider";
@@ -19,8 +19,15 @@ export function buildJobInsert(profile: ProfileRow, params: {
   durationSeconds: number;
   aspectRatio: string;
   style: string;
+  resolution: ResolutionTier;
+  qualityTier: QualityTier;
 }) {
-  const cost = calculateCreditsCost(params.durationSeconds);
+  const cost = calculateCreditsCost({
+    durationSeconds: params.durationSeconds,
+    aspectRatio: params.aspectRatio,
+    resolution: params.resolution,
+    qualityTier: params.qualityTier,
+  });
   const isPaid = canCreateNonDemoJob(profile);
   const isDemo = !isPaid;
 
@@ -38,6 +45,8 @@ export function buildJobInsert(profile: ProfileRow, params: {
     duration_seconds: params.durationSeconds,
     aspect_ratio: params.aspectRatio,
     style: params.style,
+    resolution: params.resolution,
+    quality_tier: params.qualityTier,
     status: "QUEUED",
     cost_credits: cost,
     credits_reserved: isDemo ? 0 : cost,
@@ -123,6 +132,8 @@ export async function processQueuedJobs(batchSize = 5) {
           durationSeconds: job.duration_seconds,
           aspectRatio: job.aspect_ratio,
           style: job.style,
+          resolution: job.resolution,
+          qualityTier: job.quality_tier,
         });
 
         await admin

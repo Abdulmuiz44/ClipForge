@@ -7,6 +7,9 @@ export type ProfileRow = {
   email: string;
   credits_balance: number;
   reserved_credits: number;
+  trial_credits_granted: number;
+  trial_credits_expires_at: string | null;
+  trial_credits_consumed: number;
   plan_tier: PlanTier;
   has_paid_access: boolean;
   demo_generations_used: number;
@@ -21,6 +24,8 @@ export type VideoJobRow = {
   duration_seconds: number;
   aspect_ratio: string;
   style: string;
+  resolution: string;
+  quality_tier: string;
   status: JobStatus;
   video_url: string | null;
   error_message: string | null;
