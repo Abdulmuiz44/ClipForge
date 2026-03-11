@@ -6,11 +6,13 @@ export async function createVideoJob({
   durationSeconds,
   aspectRatio,
   style,
+  referenceImageDataUrl,
 }: {
   prompt: string;
   durationSeconds: number;
   aspectRatio: string;
   style: string;
+  referenceImageDataUrl?: string;
 }): Promise<{ providerJobId: string }> {
   requireReplicateEnv();
 
@@ -27,6 +29,7 @@ export async function createVideoJob({
         duration: durationSeconds,
         aspect_ratio: aspectRatio,
         style,
+        ...(referenceImageDataUrl ? { reference_image: referenceImageDataUrl } : {}),
       },
     }),
   });

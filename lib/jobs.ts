@@ -19,13 +19,15 @@ export function buildJobInsert(profile: ProfileRow, params: {
   durationSeconds: number;
   aspectRatio: string;
   style: string;
+  referenceImageDataUrl?: string;
+  referenceImageName?: string;
 }) {
   const cost = calculateCreditsCost(params.durationSeconds);
   const isPaid = canCreateNonDemoJob(profile);
   const isDemo = !isPaid;
 
   if (isDemo && !canUseDemo(profile)) {
-    throw new Error("Free demo limit reached. Buy credits or upgrade to continue.");
+    throw new Error("Free demo limit reached. Buy credits to continue generating clips.");
   }
 
   if (!isDemo && !hasEnoughCredits(profile, cost)) {
@@ -41,19 +43,23 @@ export function buildJobInsert(profile: ProfileRow, params: {
     status: "QUEUED",
     cost_credits: cost,
     credits_reserved: isDemo ? 0 : cost,
+    credits_reserved_paid: 0,
+    credits_reserved_trial: 0,
     is_demo: isDemo,
     watermarked: isDemo,
     provider_name: appConfig.providerName,
+    reference_image_data_url: params.referenceImageDataUrl ?? null,
+    reference_image_name: params.referenceImageName ?? null,
   };
 }
 
 export async function reserveCreditsForQueuedJob(profileId: string, credits: number, isDemo: boolean) {
   if (isDemo || credits <= 0) {
-    return;
+    return { reservedPaid: 0, reservedTrial: 0 };
   }
 
   const admin = createAdminClient();
-  const { error } = await admin.rpc("reserve_credits_for_profile", {
+  const { data, error } = await admin.rpc("reserve_credits_for_profile_v2", {
     p_profile_id: profileId,
     p_credits: credits,
   });
@@ -61,6 +67,13 @@ export async function reserveCreditsForQueuedJob(profileId: string, credits: num
   if (error) {
     throw new Error(error.message);
   }
+
+  const row = (data?.[0] ?? { reserved_paid: 0, reserved_trial: 0 }) as {
+    reserved_paid: number;
+    reserved_trial: number;
+  };
+
+  return { reservedPaid: row.reserved_paid, reservedTrial: row.reserved_trial };
 }
 
 export async function incrementDemoUsage(profileId: string) {
@@ -94,6 +107,7 @@ export async function processQueuedJobs(batchSize = 5) {
           durationSeconds: job.duration_seconds,
           aspectRatio: job.aspect_ratio,
           style: job.style,
+          referenceImageDataUrl: job.reference_image_data_url ?? undefined,
         });
 
         await admin

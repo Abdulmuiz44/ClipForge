@@ -13,6 +13,27 @@ function asString(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
+async function parseReferenceImage(formData: FormData) {
+  const image = formData.get("referenceImage");
+  if (!(image instanceof File) || image.size === 0) {
+    return { dataUrl: "", fileName: "" };
+  }
+
+  if (!image.type.startsWith("image/")) {
+    throw new Error("Reference file must be an image.");
+  }
+
+  if (image.size > 2 * 1024 * 1024) {
+    throw new Error("Reference image must be 2MB or smaller.");
+  }
+
+  const bytes = Buffer.from(await image.arrayBuffer()).toString("base64");
+  return {
+    dataUrl: `data:${image.type};base64,${bytes}`,
+    fileName: image.name,
+  };
+}
+
 export async function createVideoJobAction(_: FormState, formData: FormData): Promise<FormState> {
   try {
     const profile = await getProfileForCurrentUser();
@@ -20,6 +41,7 @@ export async function createVideoJobAction(_: FormState, formData: FormData): Pr
     const durationSeconds = Number(asString(formData, "durationSeconds"));
     const aspectRatio = asString(formData, "aspectRatio");
     const style = asString(formData, "style");
+    const { dataUrl, fileName } = await parseReferenceImage(formData);
 
     if (!prompt || prompt.length < 10) {
       throw new Error("Prompt must be at least 10 characters.");
@@ -33,21 +55,44 @@ export async function createVideoJobAction(_: FormState, formData: FormData): Pr
       throw new Error("Invalid style.");
     }
 
-    const payload = buildJobInsert(profile, { prompt, durationSeconds, aspectRatio, style });
-    const admin = createAdminClient();
-    const { error } = await admin.from("video_jobs").insert(payload);
+    const payload = buildJobInsert(profile, {
+      prompt,
+      durationSeconds,
+      aspectRatio,
+      style,
+      referenceImageDataUrl: dataUrl,
+      referenceImageName: fileName,
+    });
 
-    if (error) {
-      throw new Error(error.message);
+    const admin = createAdminClient();
+    const { data: inserted, error } = await admin
+      .from("video_jobs")
+      .insert(payload)
+      .select("id")
+      .single<{ id: string }>();
+
+    if (error || !inserted) {
+      throw new Error(error?.message ?? "Could not create job.");
     }
 
-    await reserveCreditsForQueuedJob(profile.id, payload.credits_reserved, payload.is_demo);
+    const reservation = await reserveCreditsForQueuedJob(profile.id, payload.credits_reserved, payload.is_demo);
+
+    if (!payload.is_demo) {
+      await admin
+        .from("video_jobs")
+        .update({
+          credits_reserved_paid: reservation.reservedPaid,
+          credits_reserved_trial: reservation.reservedTrial,
+        })
+        .eq("id", inserted.id);
+    }
+
     if (payload.is_demo) {
       await incrementDemoUsage(profile.id);
     }
 
     revalidatePath("/dashboard");
-    return { error: "", success: "Video job queued." };
+    return { error: "", success: "Video generation started." };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Could not queue job.", success: "" };
   }

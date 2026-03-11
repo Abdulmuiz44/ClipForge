@@ -13,8 +13,18 @@ export function calculateCreditsCost(durationSeconds: number): number {
   return band.credits;
 }
 
+export function getActiveTrialCredits(profile: ProfileRow) {
+  if (!profile.trial_credits_expires_at) {
+    return 0;
+  }
+
+  return new Date(profile.trial_credits_expires_at).getTime() > Date.now()
+    ? profile.trial_credits_balance
+    : 0;
+}
+
 export function canCreateNonDemoJob(profile: ProfileRow) {
-  return profile.has_paid_access;
+  return profile.has_paid_access || getActiveTrialCredits(profile) > 0;
 }
 
 export function canUseDemo(profile: ProfileRow) {
@@ -22,5 +32,5 @@ export function canUseDemo(profile: ProfileRow) {
 }
 
 export function hasEnoughCredits(profile: ProfileRow, creditsCost: number) {
-  return profile.credits_balance >= creditsCost;
+  return profile.credits_balance + getActiveTrialCredits(profile) >= creditsCost;
 }

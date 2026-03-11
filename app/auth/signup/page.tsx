@@ -11,7 +11,7 @@ export default function SignUpPage() {
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Workspace setup</p>
             <h2 className="mt-4 text-3xl font-bold">Create your account</h2>
             <p className="mt-2 text-muted-foreground">
-              Start with two demo renders, then top up with credits when you are ready.
+              Get 100 free credits on signup to try ClipForge. Trial credits expire in 7 days, then you can top up anytime.
             </p>
             <div className="mt-8">
               <GoogleAuthButton mode="signup" />
@@ -33,8 +33,8 @@ export default function SignUpPage() {
           </p>
           <div className="grid gap-4 pt-4 md:grid-cols-2">
             <div className="rounded-xl border bg-card p-4">
-              <p className="text-sm font-bold">2 demo renders</p>
-              <p className="mt-1 text-sm text-muted-foreground">Test prompts for free before you buy credits.</p>
+              <p className="text-sm font-bold">100 free trial credits</p>
+              <p className="mt-1 text-sm text-muted-foreground">Use your free credits to generate real clips for the first 7 days.</p>
             </div>
             <div className="rounded-xl border bg-card p-4">
               <p className="text-sm font-bold">Credit-aware</p>

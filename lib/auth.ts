@@ -8,16 +8,27 @@ export function isGoogleAuthConfigured() {
 
 async function ensureProfile(email: string) {
   const admin = createAdminClient();
-  const { error } = await admin.from("profiles").upsert(
-    {
-      id: email,
-      email,
-    },
-    {
-      onConflict: "id",
-      ignoreDuplicates: false,
-    },
-  );
+  const { data: existing, error: existingError } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("id", email)
+    .maybeSingle<{ id: string }>();
+
+  if (existingError) {
+    throw new Error(existingError.message);
+  }
+
+  if (existing) {
+    return;
+  }
+
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { error } = await admin.from("profiles").insert({
+    id: email,
+    email,
+    trial_credits_balance: 100,
+    trial_credits_expires_at: expiresAt,
+  });
 
   if (error) {
     throw new Error(error.message);

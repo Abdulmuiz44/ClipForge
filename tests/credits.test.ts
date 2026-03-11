@@ -7,6 +7,8 @@ const baseProfile: ProfileRow = {
   id: "user-1",
   email: "test@example.com",
   credits_balance: 20,
+  trial_credits_balance: 0,
+  trial_credits_expires_at: null,
   reserved_credits: 0,
   plan_tier: "FREE",
   has_paid_access: false,
@@ -32,13 +34,13 @@ describe("credit calculation", () => {
   });
 });
 
-describe("demo access", () => {
+describe("demo and paid access", () => {
   it("allows demo usage below the cap", () => {
     expect(canUseDemo(baseProfile)).toBe(true);
     expect(canUseDemo({ ...baseProfile, demo_generations_used: 2 })).toBe(false);
   });
 
-  it("creates demo jobs for unpaid users", () => {
+  it("creates demo jobs for users without paid or trial credits", () => {
     const payload = buildJobInsert(baseProfile, {
       prompt: "A bright city bike cutting through rain at golden hour.",
       durationSeconds: 10,
@@ -51,9 +53,13 @@ describe("demo access", () => {
     expect(payload.credits_reserved).toBe(0);
   });
 
-  it("reserves credits for paid users", () => {
+  it("uses trial credits to create non-demo jobs", () => {
     const payload = buildJobInsert(
-      { ...baseProfile, has_paid_access: true, plan_tier: "STARTER" },
+      {
+        ...baseProfile,
+        trial_credits_balance: 100,
+        trial_credits_expires_at: new Date(Date.now() + 86400000).toISOString(),
+      },
       {
         prompt: "A bright city bike cutting through rain at golden hour.",
         durationSeconds: 25,
