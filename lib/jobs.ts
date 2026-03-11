@@ -86,27 +86,14 @@ export async function refundReservedCreditsForAbortedJob(
   }
 
   const admin = createAdminClient();
-  const { data: profile, error: profileError } = await admin
-    .from("profiles")
-    .select("credits_balance,reserved_credits,trial_credits_balance")
-    .eq("id", profileId)
-    .single<{ credits_balance: number; reserved_credits: number; trial_credits_balance: number }>();
+  const { error } = await admin.rpc("refund_reserved_credits_for_profile_v2", {
+    p_profile_id: profileId,
+    p_reserved_paid: reservedPaid,
+    p_reserved_trial: reservedTrial,
+  });
 
-  if (profileError || !profile) {
-    throw new Error(profileError?.message ?? "Unable to fetch profile for refund rollback.");
-  }
-
-  const { error: updateError } = await admin
-    .from("profiles")
-    .update({
-      credits_balance: profile.credits_balance + reservedPaid,
-      trial_credits_balance: profile.trial_credits_balance + reservedTrial,
-      reserved_credits: Math.max(profile.reserved_credits - (reservedPaid + reservedTrial), 0),
-    })
-    .eq("id", profileId);
-
-  if (updateError) {
-    throw new Error(updateError.message);
+  if (error) {
+    throw new Error(error.message);
   }
 }
 
