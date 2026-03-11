@@ -7,11 +7,12 @@ export function isGoogleAuthConfigured() {
 }
 
 async function ensureProfile(email: string) {
+  const normalizedEmail = email.trim().toLowerCase();
   const admin = createAdminClient();
   const { error } = await admin.from("profiles").upsert(
     {
-      id: email,
-      email,
+      id: normalizedEmail,
+      email: normalizedEmail,
     },
     {
       onConflict: "id",
@@ -51,11 +52,11 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user }) {
       if (user?.email) {
-        token.userId = user.email;
+        token.userId = user.email.trim().toLowerCase();
       }
 
       if (!token.userId && token.email) {
-        token.userId = token.email;
+        token.userId = token.email.trim().toLowerCase();
       }
 
       return token;

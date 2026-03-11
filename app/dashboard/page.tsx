@@ -20,7 +20,7 @@ export default async function DashboardPage() {
         <PageIntro
           eyebrow="Clip studio"
           title="Create short AI videos from a single prompt."
-          body="Start with a simple idea, send, and monitor progress while ClipForge renders your next short clip."
+          body="Use the large prompt canvas below to describe your scene in detail, then generate and monitor progress in one place."
         />
       </Reveal>
 
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
 
         <div className="space-y-6">
           <Reveal delay={0.08}>
-            <SectionCard title="Prompt composer" description="Keep it simple: describe the clip and send.">
+            <SectionCard title="Prompt composer" description="Use the large text area to write detailed prompts and generate polished clips faster.">
               <div className="mb-4 flex items-center justify-end">
                 <CreditBadge credits={profile.credits_balance} />
               </div>
