@@ -1,6 +1,7 @@
 import { BuyButtons } from "@/components/buy-buttons";
 import { CreditBadge } from "@/components/credit-badge";
 import { JobForm } from "@/components/job-form";
+import { JobsLiveRefresh } from "@/components/jobs-live-refresh";
 import { JobsTable } from "@/components/jobs-table";
 import { Reveal } from "@/components/reveal";
 import { PageIntro, SectionCard, StatCard } from "@/components/ui";
@@ -13,6 +14,7 @@ export default async function DashboardPage() {
     getProfileForCurrentUser(),
     getRecentJobsForCurrentUser(),
   ]);
+  const hasActiveJobs = jobs.some((job) => job.status === "QUEUED" || job.status === "PROCESSING");
 
   return (
     <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 md:px-6">
@@ -34,6 +36,7 @@ export default async function DashboardPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <SectionCard title="Recent clip generations" description="Track render progress and open any clip to preview or download.">
+              <JobsLiveRefresh hasActiveJobs={hasActiveJobs} />
               <JobsTable jobs={jobs} />
             </SectionCard>
           </Reveal>
@@ -52,7 +55,7 @@ export default async function DashboardPage() {
             <p className="text-xs font-bold uppercase tracking-widest text-primary">Before you generate</p>
             <div className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
               <p>ClipForge is designed for short 10–30 second outputs that are easy to repurpose across channels.</p>
-              <p>Credits are reserved when you queue a job and automatically released if generation fails.</p>
+              <p>Credits are priced by duration, resolution, quality tier, and aspect ratio, then reserved when you queue a job.</p>
               <p>Use vertical (9:16) for social, landscape (16:9) for ads and explainers, or square (1:1) for feeds.</p>
             </div>
           </Reveal>
