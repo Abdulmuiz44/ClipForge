@@ -58,12 +58,12 @@ export function JobForm() {
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
       <label className="block">
-        <span className="sr-only">Prompt</span>
+        <span className="mb-2 block text-sm font-semibold text-foreground">Describe the video you want to generate</span>
         <textarea
           required
           minLength={10}
           name="prompt"
-          rows={8}
+          rows={12}
           value={prompt}
           onChange={(event) => setPrompt(event.target.value)}
           onKeyDown={(event) => {
@@ -72,7 +72,7 @@ export function JobForm() {
               formRef.current?.requestSubmit();
             }
           }}
-          className="input-dark min-h-[240px] resize-y text-base"
+          className="input-dark min-h-[360px] resize-y text-base leading-7"
           placeholder="Describe the clip you want to generate. Include subject, setting, style, and motion..."
         />
       </label>

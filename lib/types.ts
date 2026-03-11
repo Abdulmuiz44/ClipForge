@@ -10,6 +10,7 @@ export type ProfileRow = {
   plan_tier: PlanTier;
   has_paid_access: boolean;
   demo_generations_used: number;
+  trial_credits_consumed: number;
   created_at: string;
   updated_at: string;
 };
