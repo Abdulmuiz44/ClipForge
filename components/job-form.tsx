@@ -34,9 +34,9 @@ export function JobForm() {
             required
             minLength={10}
             name="prompt"
-            rows={4}
-            className="input-dark resize-none"
-            placeholder="Describe the scene, camera style, lighting, and subject motion."
+            rows={10}
+            className="input-dark resize-y text-base leading-7"
+            placeholder="Describe the full video you want to generate: subject, scene, camera movement, style, lighting, pacing, and ending frame."
           />
         </label>
 
