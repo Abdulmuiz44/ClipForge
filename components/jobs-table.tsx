@@ -60,7 +60,7 @@ export function JobsTable({ jobs }: { jobs: VideoJobRow[] }) {
               </div>
               <p className="truncate text-base font-bold text-foreground md:text-lg">{job.prompt}</p>
               <p className="text-xs font-medium text-muted-foreground">
-                {job.duration_seconds}s clip • {job.aspect_ratio} • {job.style} • {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
+                {job.duration_seconds}s • {job.resolution} • {job.quality_tier} • {job.aspect_ratio} • {job.style} • {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
               </p>
             </div>
             <div className="flex items-center">

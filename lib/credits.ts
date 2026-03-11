@@ -1,16 +1,39 @@
 import { appConfig } from "@/lib/config";
 import { type ProfileRow } from "@/lib/types";
 
-export function calculateCreditsCost(durationSeconds: number): number {
-  const band = appConfig.creditBands.find(
-    (item) => durationSeconds >= item.min && durationSeconds <= item.max,
+export type ResolutionTier = keyof typeof appConfig.resolutionTiers;
+export type QualityTier = keyof typeof appConfig.qualityTiers;
+
+export function calculateCreditsCost(params: {
+  durationSeconds: number;
+  aspectRatio: string;
+  resolution: ResolutionTier;
+  qualityTier: QualityTier;
+}): number {
+  const durationBand = appConfig.baseCreditsByDuration.find(
+    (item) => params.durationSeconds >= item.min && params.durationSeconds <= item.max,
   );
 
-  if (!band) {
+  if (!durationBand) {
     throw new Error("Duration must be between 10 and 30 seconds.");
   }
 
-  return band.credits;
+  const aspectMultiplier = appConfig.aspectRatioMultipliers[params.aspectRatio as keyof typeof appConfig.aspectRatioMultipliers];
+  if (!aspectMultiplier) {
+    throw new Error("Invalid aspect ratio for pricing.");
+  }
+
+  const resolution = appConfig.resolutionTiers[params.resolution];
+  if (!resolution) {
+    throw new Error("Invalid resolution tier.");
+  }
+
+  const quality = appConfig.qualityTiers[params.qualityTier];
+  if (!quality) {
+    throw new Error("Invalid quality tier.");
+  }
+
+  return Math.ceil(durationBand.credits * aspectMultiplier * resolution.multiplier * quality.multiplier);
 }
 
 export function canCreateNonDemoJob(profile: ProfileRow) {
