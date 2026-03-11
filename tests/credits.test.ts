@@ -6,7 +6,7 @@ import { type ProfileRow } from "@/lib/types";
 const baseProfile: ProfileRow = {
   id: "user-1",
   email: "test@example.com",
-  credits_balance: 20,
+  credits_balance: 80,
   reserved_credits: 0,
   plan_tier: "FREE",
   has_paid_access: false,
@@ -16,19 +16,21 @@ const baseProfile: ProfileRow = {
 };
 
 describe("credit calculation", () => {
-  it("charges 5 credits for 10 to 20 seconds", () => {
-    expect(calculateCreditsCost(10)).toBe(5);
-    expect(calculateCreditsCost(20)).toBe(5);
+  it("charges base amount for short draft 16:9 hd jobs", () => {
+    expect(calculateCreditsCost({ durationSeconds: 10, aspectRatio: "16:9", resolution: "hd", qualityTier: "draft" })).toBe(7);
   });
 
-  it("charges 8 credits for 21 to 30 seconds", () => {
-    expect(calculateCreditsCost(21)).toBe(8);
-    expect(calculateCreditsCost(30)).toBe(8);
+  it("increases cost for longer premium 1080p jobs", () => {
+    expect(calculateCreditsCost({ durationSeconds: 30, aspectRatio: "16:9", resolution: "fullhd", qualityTier: "premium" })).toBe(21);
   });
 
-  it("rejects invalid duration", () => {
-    expect(() => calculateCreditsCost(9)).toThrow();
-    expect(() => calculateCreditsCost(31)).toThrow();
+  it("applies aspect-ratio multiplier for square videos", () => {
+    expect(calculateCreditsCost({ durationSeconds: 21, aspectRatio: "1:1", resolution: "hd", qualityTier: "standard" })).toBe(13);
+  });
+
+  it("rejects invalid pricing inputs", () => {
+    expect(() => calculateCreditsCost({ durationSeconds: 9, aspectRatio: "16:9", resolution: "hd", qualityTier: "standard" })).toThrow();
+    expect(() => calculateCreditsCost({ durationSeconds: 10, aspectRatio: "4:3", resolution: "hd", qualityTier: "standard" })).toThrow();
   });
 });
 
@@ -44,11 +46,15 @@ describe("demo access", () => {
       durationSeconds: 10,
       aspectRatio: "16:9",
       style: "cinematic",
+      resolution: "hd",
+      qualityTier: "standard",
     });
 
     expect(payload.is_demo).toBe(true);
     expect(payload.watermarked).toBe(true);
     expect(payload.credits_reserved).toBe(0);
+    expect(payload.resolution).toBe("hd");
+    expect(payload.quality_tier).toBe("standard");
   });
 
   it("reserves credits for paid users", () => {
@@ -59,10 +65,12 @@ describe("demo access", () => {
         durationSeconds: 25,
         aspectRatio: "16:9",
         style: "cinematic",
+        resolution: "fullhd",
+        qualityTier: "premium",
       },
     );
 
     expect(payload.is_demo).toBe(false);
-    expect(payload.credits_reserved).toBe(8);
+    expect(payload.credits_reserved).toBe(21);
   });
 });

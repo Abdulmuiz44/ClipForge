@@ -21,6 +21,8 @@ export type VideoJobRow = {
   duration_seconds: number;
   aspect_ratio: string;
   style: string;
+  resolution: string;
+  quality_tier: string;
   status: JobStatus;
   video_url: string | null;
   error_message: string | null;

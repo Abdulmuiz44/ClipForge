@@ -97,6 +97,25 @@ export function JobForm() {
           </label>
         </div>
 
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-sm font-bold text-foreground">Resolution</span>
+            <select name="resolution" className="input-dark" defaultValue="hd">
+              <option value="sd">480p (lowest cost)</option>
+              <option value="hd">720p (balanced)</option>
+              <option value="fullhd">1080p (highest detail)</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-sm font-bold text-foreground">Quality tier</span>
+            <select name="qualityTier" className="input-dark" defaultValue="standard">
+              <option value="draft">Draft (quick iteration)</option>
+              <option value="standard">Standard (recommended)</option>
+              <option value="premium">Premium (best output)</option>
+            </select>
+          </label>
+        </div>
+
         <label className="block">
           <span className="mb-2 block text-sm font-bold text-foreground">Visual style</span>
           <select name="style" className="input-dark" defaultValue="cinematic">
@@ -111,7 +130,7 @@ export function JobForm() {
       <div className="rounded-xl border border-border bg-muted/30 p-4">
         <p className="text-sm font-bold text-foreground">Generation notes</p>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Free demo clips are watermarked. Paid clips reserve credits at queue time and automatically refund on failures.
+          Billing now scales with duration, resolution, quality tier, and aspect ratio. Free demo clips are watermarked. Paid clips reserve credits at queue time and automatically refund on failures.
         </p>
       </div>
 
