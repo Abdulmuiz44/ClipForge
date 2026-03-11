@@ -5,6 +5,7 @@ export type PaymentType = "ONE_TIME" | "SUBSCRIPTION";
 export type ProfileRow = {
   id: string;
   email: string;
+  trial_credits_consumed: number;
   credits_balance: number;
   reserved_credits: number;
   plan_tier: PlanTier;
