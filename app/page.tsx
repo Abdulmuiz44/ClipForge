@@ -1,157 +1,145 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Wallet, Film } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
-import { appConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "ClipForge | Automate your video creation with AI",
-  description: "Real workflows, tested prompts, and credit-based pricing for AI video generation.",
+  title: "ClipForge | AI text-to-video clips for content and marketing",
+  description:
+    "Turn short text prompts into high-quality 10 to 30 second AI video clips for content, marketing, and storytelling.",
 };
+
+const useCases = [
+  {
+    title: "Social content clips",
+    body: "Generate short vertical scenes for Reels, Shorts, and TikTok from one prompt.",
+  },
+  {
+    title: "Marketing videos",
+    body: "Create fast product teasers, launch visuals, and ad concepts without a full production pipeline.",
+  },
+  {
+    title: "Storytelling scenes",
+    body: "Draft mood-driven visual scenes to pitch ideas, scripts, or creative directions.",
+  },
+];
+
+const benefits = [
+  {
+    title: "Built for 10–30 second clips",
+    body: "ClipForge is optimized for short-form outputs so your videos feel focused and platform-ready.",
+  },
+  {
+    title: "Simple prompt-to-video flow",
+    body: "Describe the shot, choose duration and aspect ratio, then generate in one clean workflow.",
+  },
+  {
+    title: "Production-friendly controls",
+    body: "Keep consistency with style options, track job status, and download outputs in one dashboard.",
+  },
+];
 
 export default function Home() {
   return (
-    <main className="flex flex-col gap-16 py-12 md:py-24">
-      {/* Hero Section */}
+    <main className="flex flex-col gap-16 py-12 md:gap-24 md:py-20">
       <section className="px-4">
-        <div className="mx-auto max-w-5xl text-center space-y-8">
+        <div className="mx-auto max-w-6xl rounded-3xl border bg-card px-6 py-12 text-center shadow-sm md:px-10 md:py-16">
           <Reveal>
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
-              Automate your work <br />
-              <span className="text-primary">with ClipForge AI</span>
+            <p className="text-xs font-semibold uppercase tracking-[0.26em] text-primary">AI video creation platform</p>
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-6xl">
+              Turn short text prompts into
+              <span className="text-primary"> high-quality 10–30 second video clips</span>
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
-              Real workflows, tested prompt packs, and easy AI video generation for creators.
+            <p className="mx-auto mt-6 max-w-3xl text-base text-muted-foreground md:text-xl">
+              ClipForge helps creators, marketers, and storytellers generate polished short videos fast—without a complex editing workflow.
             </p>
           </Reveal>
-          <Reveal delay={0.2} className="flex items-center justify-center gap-4">
-            <Link href="/auth/signup" className="button-primary px-8 py-4 text-base">
-              Browse workflows
+          <Reveal delay={0.2} className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/auth/signup" className="button-primary px-8 py-3.5 text-base">
+              Start creating clips
             </Link>
-            <Link href="/pricing" className="button-secondary px-8 py-4 text-base">
-              Explore pricing
+            <Link href="/dashboard" className="button-secondary px-8 py-3.5 text-base">
+              See the generation flow
             </Link>
+          </Reveal>
+          <Reveal delay={0.3} className="mt-6 text-sm text-muted-foreground">
+            <p>Pay only for what you use • No monthly subscription charges • Supports 10s, 15s, 20s, 25s, and 30s clips</p>
           </Reveal>
         </div>
       </section>
 
-      {/* Info Section */}
-      <section className="bg-muted/30 py-16">
-        <div className="mx-auto max-w-5xl px-4">
-          <h2 className="mb-12 text-center text-3xl font-bold">Get started in 3 steps</h2>
-          <div className="grid gap-8 md:grid-cols-3">
+      <section className="px-4">
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+          {benefits.map((benefit, i) => (
+            <Reveal key={benefit.title} delay={0.08 * i} className="rounded-2xl border bg-card p-6">
+              <h2 className="text-lg font-semibold">{benefit.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{benefit.body}</p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-muted/30 py-14">
+        <div className="mx-auto max-w-6xl px-4">
+          <Reveal>
+            <h2 className="text-center text-3xl font-bold tracking-tight">How ClipForge works</h2>
+          </Reveal>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
             {[
               {
                 step: "1",
-                title: "Create an Account",
-                desc: "Sign up and get started with our easy-to-use dashboard.",
+                title: "Write a short prompt",
+                desc: "Describe subject, scene, camera feel, and movement in one concise brief.",
               },
               {
                 step: "2",
-                title: "Buy Credits",
-                desc: "Choose a credit pack that fits your needs. Pay only for what you use.",
+                title: "Set clip format",
+                desc: "Choose duration (10–30s), aspect ratio, and style for your use case.",
               },
               {
                 step: "3",
-                title: "Generate Video",
-                desc: "Enter your prompt, select your style, and let ClipForge do the rest.",
+                title: "Generate and download",
+                desc: "Track render status in the dashboard and download your final video clip.",
               },
             ].map((item, i) => (
               <Reveal key={item.step} delay={0.1 * i} className="rounded-xl border bg-card p-6">
-                <span className="mb-4 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                   {item.step}
                 </span>
-                <h3 className="mb-2 font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{item.desc}</p>
               </Reveal>
             ))}
           </div>
-          <p className="mt-8 text-center">
-            <Link href="/auth/signup" className="font-medium text-primary hover:underline">
-              Read the full getting-started guide →
-            </Link>
-          </p>
         </div>
       </section>
 
-      {/* Features Grid */}
       <section className="px-4">
-        <div className="mx-auto max-w-5xl">
-          <div className="grid gap-6 sm:grid-cols-3">
-            {[
-              {
-                title: "Workflows",
-                desc: "Tested recipes with exact permission scopes.",
-                link: "/dashboard",
-                linkText: "View all →",
-              },
-              {
-                title: "Prompt packs",
-                desc: "Curated sets of AI prompts. Copy and run.",
-                link: "/dashboard",
-                linkText: "Browse →",
-              },
-              {
-                title: "Connectors",
-                desc: "Connect to Gmail, Google Drive, and more.",
-                link: "/dashboard",
-                linkText: "See guides →",
-              },
-            ].map((item, i) => (
-              <Reveal key={item.title} delay={0.1 * i} className="rounded-xl border bg-card p-6">
-                <h3 className="mb-2 font-semibold">{item.title}</h3>
-                <p className="mb-4 text-sm text-muted-foreground">{item.desc}</p>
-                <Link href={item.link} className="text-sm font-medium text-primary hover:underline">
-                  {item.linkText}
-                </Link>
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <h2 className="text-3xl font-bold tracking-tight">Use cases teams start with</h2>
+          </Reveal>
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {useCases.map((item, i) => (
+              <Reveal key={item.title} delay={0.08 * i} className="rounded-2xl border bg-card p-6">
+                <h3 className="text-lg font-semibold">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
               </Reveal>
             ))}
           </div>
+
+          <Reveal delay={0.25} className="mt-10 rounded-2xl border bg-card p-6 md:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Social proof placeholder</p>
+            <p className="mt-3 text-lg font-medium">
+              Teams use ClipForge to turn creative ideas into short video assets in minutes.
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Add customer logos, testimonials, or case studies here as adoption grows.
+            </p>
+          </Reveal>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t bg-secondary py-12 text-secondary-foreground">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold">⚡</h3>
-              <p className="text-sm opacity-75">
-                The operator&apos;s manual for AI video generation. Workflows, prompt packs, and safety guidance for real work.
-              </p>
-            </div>
-            <div>
-              <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide">Resources</h4>
-              <ul className="space-y-2 text-sm opacity-75">
-                <li><Link href="/">Start Here</Link></li>
-                <li><Link href="/dashboard">Workflows</Link></li>
-                <li><Link href="/dashboard">Prompt Packs</Link></li>
-                <li><Link href="/dashboard">Connectors</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide">Legal</h4>
-              <ul className="space-y-2 text-sm opacity-75">
-                <li><Link href="#">About</Link></li>
-                <li><Link href="#">Privacy</Link></li>
-                <li><Link href="#">Terms</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide">Newsletter</h4>
-              <p className="mb-4 text-sm opacity-75">1 new workflow + prompt pack weekly.</p>
-              <button className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-                Get the Drops
-              </button>
-            </div>
-          </div>
-          <div className="mt-12 border-t pt-8 text-center text-xs opacity-50">
-            <p>© {new Date().getFullYear()} ClipForge. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }

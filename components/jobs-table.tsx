@@ -20,9 +20,24 @@ function statusTone(status: string) {
   }
 }
 
+function statusLabel(status: string) {
+  switch (status) {
+    case "QUEUED":
+      return "Queued";
+    case "PROCESSING":
+      return "Generating";
+    case "COMPLETED":
+      return "Ready";
+    case "FAILED":
+      return "Failed";
+    default:
+      return status;
+  }
+}
+
 export function JobsTable({ jobs }: { jobs: VideoJobRow[] }) {
   if (!jobs.length) {
-    return <EmptyState title="No videos yet" body="Your recent renders will populate this queue once you submit a job." />;
+    return <EmptyState title="No clips generated yet" body="Submit your first prompt to generate a 10 to 30 second AI video clip." />;
   }
 
   return (
@@ -39,18 +54,18 @@ export function JobsTable({ jobs }: { jobs: VideoJobRow[] }) {
             <div className="min-w-0 flex-1 space-y-3">
               <div className="flex flex-wrap items-center gap-3">
                 <span className={cn("rounded-full border px-2.5 py-0.5 text-xs font-bold", statusTone(job.status))}>
-                  {job.status}
+                  {statusLabel(job.status)}
                 </span>
                 <span className="text-xs font-medium text-muted-foreground/60">{job.cost_credits} credits</span>
               </div>
               <p className="truncate text-base font-bold text-foreground md:text-lg">{job.prompt}</p>
               <p className="text-xs font-medium text-muted-foreground">
-                {job.duration_seconds}s • {job.aspect_ratio} • {job.style} • {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
+                {job.duration_seconds}s clip • {job.aspect_ratio} • {job.style} • {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
               </p>
             </div>
             <div className="flex items-center">
               <Link href={`/videos/${job.id}`} className="button-secondary w-full md:w-auto">
-                View details
+                Open clip
               </Link>
             </div>
           </div>

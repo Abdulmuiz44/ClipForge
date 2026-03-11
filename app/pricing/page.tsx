@@ -26,9 +26,9 @@ export default function PricingPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 md:py-24">
       <Reveal className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold md:text-6xl tracking-tight">Simple, credit-based pricing.</h1>
+        <h1 className="mb-4 text-4xl font-bold md:text-6xl tracking-tight">Credit-based pricing for fast AI video clips.</h1>
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-          No subscriptions. No hidden fees. Pay only for what you use. Buy credits as you need them.
+          Full credit-based, pay-as-you-go pricing. No monthly subscription charges—buy credits only when you need new renders.
         </p>
       </Reveal>
 
@@ -41,7 +41,7 @@ export default function PricingPage() {
       </div>
 
       <Reveal delay={0.3}>
-        <SectionCard title="Custom Amount" description="Choose exactly how many credits you want to purchase.">
+        <SectionCard title="Custom credit amount" description="Choose exactly how many credits to add for upcoming video generations.">
           <div className="space-y-8 py-4">
             <div className="space-y-4">
               <div className="flex justify-between text-sm font-medium">
@@ -71,7 +71,7 @@ export default function PricingPage() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              Payments are securely processed by Lemon Squeezy. Credits never expire.
+              Payments are securely processed by Lemon Squeezy. Credits never expire, and there are no recurring monthly fees.
             </p>
           </div>
         </SectionCard>

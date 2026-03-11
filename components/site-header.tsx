@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 const nav = [
   { href: "/pricing", label: "Pricing" },
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/dashboard", label: "Generate" },
   { href: "/auth/signin", label: "Sign in" },
 ];
 
@@ -14,9 +14,12 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
             <span className="text-2xl">⚡</span>
-            <span className="hidden font-bold sm:inline-block">ClipForge</span>
+            <div className="hidden sm:block">
+              <p className="font-bold leading-none">ClipForge</p>
+              <p className="text-xs text-muted-foreground">AI text-to-video clips</p>
+            </div>
           </Link>
         </div>
 
