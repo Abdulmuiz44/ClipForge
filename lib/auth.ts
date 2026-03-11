@@ -12,6 +12,7 @@ async function ensureProfile(email: string) {
     {
       id: email,
       email,
+      trial_credits_consumed: 0,
     },
     {
       onConflict: "id",
