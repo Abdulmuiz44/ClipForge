@@ -76,6 +76,40 @@ export async function reserveCreditsForQueuedJob(profileId: string, credits: num
   return { reservedPaid: row.reserved_paid, reservedTrial: row.reserved_trial };
 }
 
+export async function refundReservedCreditsForAbortedJob(
+  profileId: string,
+  reservedPaid: number,
+  reservedTrial: number,
+) {
+  if (reservedPaid <= 0 && reservedTrial <= 0) {
+    return;
+  }
+
+  const admin = createAdminClient();
+  const { data: profile, error: profileError } = await admin
+    .from("profiles")
+    .select("credits_balance,reserved_credits,trial_credits_balance")
+    .eq("id", profileId)
+    .single<{ credits_balance: number; reserved_credits: number; trial_credits_balance: number }>();
+
+  if (profileError || !profile) {
+    throw new Error(profileError?.message ?? "Unable to fetch profile for refund rollback.");
+  }
+
+  const { error: updateError } = await admin
+    .from("profiles")
+    .update({
+      credits_balance: profile.credits_balance + reservedPaid,
+      trial_credits_balance: profile.trial_credits_balance + reservedTrial,
+      reserved_credits: Math.max(profile.reserved_credits - (reservedPaid + reservedTrial), 0),
+    })
+    .eq("id", profileId);
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
+}
+
 export async function incrementDemoUsage(profileId: string) {
   const admin = createAdminClient();
   const { error } = await admin.rpc("increment_demo_usage", { p_profile_id: profileId });

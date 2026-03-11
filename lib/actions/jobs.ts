@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { appConfig } from "@/lib/config";
-import { buildJobInsert, incrementDemoUsage, reserveCreditsForQueuedJob } from "@/lib/jobs";
+import {
+  buildJobInsert,
+  incrementDemoUsage,
+  refundReservedCreditsForAbortedJob,
+  reserveCreditsForQueuedJob,
+} from "@/lib/jobs";
 import { getProfileForCurrentUser } from "@/lib/queries";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -35,6 +40,10 @@ async function parseReferenceImage(formData: FormData) {
 }
 
 export async function createVideoJobAction(_: FormState, formData: FormData): Promise<FormState> {
+  let reservedPaid = 0;
+  let reservedTrial = 0;
+  let reservedForUserId = "";
+
   try {
     const profile = await getProfileForCurrentUser();
     const prompt = asString(formData, "prompt");
@@ -64,27 +73,20 @@ export async function createVideoJobAction(_: FormState, formData: FormData): Pr
       referenceImageName: fileName,
     });
 
-    const admin = createAdminClient();
-    const { data: inserted, error } = await admin
-      .from("video_jobs")
-      .insert(payload)
-      .select("id")
-      .single<{ id: string }>();
-
-    if (error || !inserted) {
-      throw new Error(error?.message ?? "Could not create job.");
-    }
-
     const reservation = await reserveCreditsForQueuedJob(profile.id, payload.credits_reserved, payload.is_demo);
+    reservedPaid = reservation.reservedPaid;
+    reservedTrial = reservation.reservedTrial;
+    reservedForUserId = profile.id;
 
-    if (!payload.is_demo) {
-      await admin
-        .from("video_jobs")
-        .update({
-          credits_reserved_paid: reservation.reservedPaid,
-          credits_reserved_trial: reservation.reservedTrial,
-        })
-        .eq("id", inserted.id);
+    const admin = createAdminClient();
+    const { error } = await admin.from("video_jobs").insert({
+      ...payload,
+      credits_reserved_paid: reservation.reservedPaid,
+      credits_reserved_trial: reservation.reservedTrial,
+    });
+
+    if (error) {
+      throw new Error(error.message);
     }
 
     if (payload.is_demo) {
@@ -94,6 +96,14 @@ export async function createVideoJobAction(_: FormState, formData: FormData): Pr
     revalidatePath("/dashboard");
     return { error: "", success: "Video generation started." };
   } catch (error) {
+    if (reservedForUserId && (reservedPaid > 0 || reservedTrial > 0)) {
+      try {
+        await refundReservedCreditsForAbortedJob(reservedForUserId, reservedPaid, reservedTrial);
+      } catch {
+        // Intentionally swallowed to preserve original error returned to UI.
+      }
+    }
+
     return { error: error instanceof Error ? error.message : "Could not queue job.", success: "" };
   }
 }
