@@ -12,9 +12,6 @@ async function ensureProfile(email: string) {
     {
       id: email,
       email,
-      trial_credits_granted: 100,
-      trial_credits_consumed: 0,
-      trial_credits_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       onConflict: "id",
