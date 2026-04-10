@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { GoogleAuthButton } from "@/components/google-auth-button";
 import { Reveal } from "@/components/reveal";
+import { getAuthConfigIssue, isGoogleSignInAvailable } from "@/lib/auth";
 
 export default function SignUpPage() {
+  const authEnabled = isGoogleSignInAvailable();
+  const authIssue = getAuthConfigIssue();
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 md:px-6">
       <div className="grid gap-12 lg:grid-cols-2 items-center min-h-[70vh]">
@@ -14,7 +18,7 @@ export default function SignUpPage() {
               Start with two demo renders, then top up with credits when you are ready.
             </p>
             <div className="mt-8">
-              <GoogleAuthButton mode="signup" />
+              <GoogleAuthButton mode="signup" authEnabled={authEnabled} disabledReason={authIssue ?? undefined} />
             </div>
             <p className="mt-6 text-center text-sm text-muted-foreground">
               Already have an account? <Link href="/auth/signin" className="font-semibold text-primary hover:underline underline-offset-4">Sign in</Link>
