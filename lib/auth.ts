@@ -63,7 +63,6 @@ async function ensureProfile(email: string) {
 }
 
 export const authOptions: NextAuthOptions = {
-  trustHost: true,
   providers: isGoogleAuthConfigured()
     ? [
         GoogleProvider({
