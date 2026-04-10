@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, logAuthConfigWarnings } from "@/lib/auth";
+
+logAuthConfigWarnings();
 
 const handler = NextAuth(authOptions);
 
