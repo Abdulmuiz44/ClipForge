@@ -5,9 +5,11 @@ import { signIn, signOut } from "next-auth/react";
 
 type Props = {
   mode: "signin" | "signup" | "signout";
+  authEnabled?: boolean;
+  disabledReason?: string;
 };
 
-export function GoogleAuthButton({ mode }: Props) {
+export function GoogleAuthButton({ mode, authEnabled = true, disabledReason }: Props) {
   if (mode === "signout") {
     return (
       <motion.button
@@ -19,6 +21,23 @@ export function GoogleAuthButton({ mode }: Props) {
       >
         Sign out
       </motion.button>
+    );
+  }
+
+  if (!authEnabled) {
+    return (
+      <div className="space-y-3">
+        <button
+          type="button"
+          disabled
+          aria-disabled="true"
+          className="button-primary w-full cursor-not-allowed gap-3 py-4 opacity-60"
+        >
+          <div className="flex size-6 items-center justify-center rounded-full bg-white text-black font-bold text-sm">G</div>
+          Google sign-in unavailable
+        </button>
+        <p className="text-sm text-muted-foreground">{disabledReason ?? "Authentication is temporarily unavailable."}</p>
+      </div>
     );
   }
 

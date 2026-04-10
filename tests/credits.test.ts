@@ -91,10 +91,12 @@ describe("trial credit availability", () => {
       durationSeconds: 25,
       aspectRatio: "16:9",
       style: "cinematic",
+      resolution: "hd",
+      qualityTier: "draft",
     });
 
     expect(payload.is_demo).toBe(false);
-    expect(payload.credits_reserved).toBe(8);
+    expect(payload.credits_reserved).toBe(11);
   });
 });
 

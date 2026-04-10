@@ -40,7 +40,8 @@ pnpm install
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `NEXTAUTH_URL`
+- `NEXTAUTH_URL` (primary auth base URL)
+- `APP_URL` (optional fallback if `NEXTAUTH_URL` is missing)
 - `NEXTAUTH_SECRET`
 - `AUTH_GOOGLE_ID`
 - `AUTH_GOOGLE_SECRET`
@@ -53,17 +54,34 @@ pnpm install
 
 3. Apply the SQL schema in `supabase/migrations/0001_clipforge.sql` to your Supabase project.
 
-4. In Google Cloud Console, add an OAuth client with callback URL:
+4. In Google Cloud Console, configure an OAuth client with:
 
-```text
-http://localhost:3000/api/auth/callback/google
-```
+- Authorized JavaScript origin: `http://localhost:3000`
+- Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
 
 5. Run the dev server:
 
 ```bash
 pnpm dev
 ```
+
+## Netlify production auth setup
+
+Set these environment variables in Netlify (Site configuration → Environment variables):
+
+- `NEXTAUTH_URL=https://clip-forge.netlify.app` (recommended primary)
+- `APP_URL=https://clip-forge.netlify.app` (optional fallback)
+- `NEXTAUTH_SECRET=<strong random secret>`
+- `AUTH_GOOGLE_ID=<Google OAuth client id>`
+- `AUTH_GOOGLE_SECRET=<Google OAuth client secret>`
+- Supabase env vars (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`)
+
+In Google Cloud Console for the same OAuth client:
+
+- Authorized JavaScript origin: `https://clip-forge.netlify.app`
+- Authorized redirect URI: `https://clip-forge.netlify.app/api/auth/callback/google`
+
+If the callback URL or auth base URL does not match exactly, Google sign-in will fail with callback/configuration errors.
 
 ## Product behavior
 
